@@ -16,7 +16,9 @@ MSopas				EQU 		4			; Op��o de Sopas
 MQuente 			EQU 		1			; Op��o de bebida quente
 MFrio				EQU 		2			; Op��o de bebida fria
 
-StackPointer 		EQU 		6000H 
+;StackPointer 		EQU 		6000H 
+
+
 
 Place 0190H
 MostraBotoes:
@@ -70,6 +72,12 @@ Inicio:
 		JMP R0
 
 Place 3000H
+
+;inicializar o stackpoint para o Call funcuonar
+pilha:
+	STACK 10H;
+StackPointer:
+
 Principio:
 		MOV SP, StackPointer
 		CALL LimpaDisplay
