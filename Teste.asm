@@ -1,7 +1,12 @@
 ; Perif�ricos
 ON_OFF				EQU			1A0H
-Opcao				EQU			1B0H
+Sel_Nr_Menu			EQU			1B0H
 OK					EQU			1C0H
+CHANGE				EQU			1D0H
+CANCEL				EQU			1E0H
+PESO				EQU			1F0H
+
+
 
 ; Display
 Display				EQU			200H
@@ -25,25 +30,37 @@ MostraBotoes:
 	String "Botoes em baixo "
 
 Place 01A2H
-Bopcao:
-	String"Opcao         "
+BOnOff:
+	String "On_off        "
 
 Place 01B2H
-BOK:
-	String"Ok            "
+BSel_Nr_Menu:
+	String "Sel_Nr_Menu   "
 
 Place 01C2H
-Onoff:
-	String"On_off        "
+BOk:
+	String "Ok            "
+
+Place 01D2H
+BChange:
+	String "Change        "
+
+Place 01E2H
+BCancel:
+	String "Cancel        "
+
+Place 01F2H
+BPeso:
+	String "Peso          "
 
 Place 2000H
 MenuInicio:
 	String " MENU PRINCIPAL "
-	String "1 - ALMO�O      "
-	String "2 - BEBIDAS     "
-	string "3 - SANDES      "
-	String "4 - SOPAS       "
-	String "                "
+	String "1 - BALANCA     "
+	String "2 - REGISTOS    "
+	string "----------------"
+	String "4 - LIMPAR      "
+	String "    REGISTOS    "
 	String "                "
 
 Place 2080H
@@ -92,7 +109,7 @@ ligado:
 		CALL MostraDisplay
 		CALL LimpaPerifericos
 Le_Opcao:
-		MOV R0, Opcao
+		MOV R0, Sel_Nr_Menu
 		MOVB R1, [R0]
 		CMP R1, 0
 		JEQ Le_Opcao
@@ -116,7 +133,7 @@ OBebidas:
 		MOV R2, MenuBebidas
 		CALL MostraDisplay
 		CALL LimpaPerifericos
-		MOV R0, Opcao
+		MOV R0, Sel_Nr_Menu
 OBebidasciclo:
 		MOVB R1, [R0]
 		CMP R1, 0
@@ -202,7 +219,7 @@ LimpaPerifericos:
 		PUSH R1
 		PUSH R2
 		MOV R0, ON_OFF
-		MOV R1, Opcao
+		MOV R1, Sel_Nr_Menu
 		MOV R2, OK
 		MOV R3, 0
 		MOVB [R0], R3
