@@ -6,36 +6,18 @@ CHANGE				EQU			1C0H
 CANCEL				EQU			1D0H
 PESO				EQU			1E0H
 PRODUTO				EQU 		1F0H
-;CODIGOS DOS PRODUTOS	
-UVAS				EQU			
-MELANCIA			EQU
-ANANAS				EQU
-KIWI				EQU
-PESSEGO				EQU
-BANANA				EQU
-MORANGO				EQU
-FRAMBOESA			EQU
-LARANJA				EQU
-TANGERINA			EQU
-CENOURA				EQU
-BATATA				EQU
-NABO				EQU
-BETERRABA			EQU
-ALHO				EQU
-CEBOLA				EQU
-ERVILHA				EQU
-LENTILHAS			EQU
-TRIGO				EQU
-MILHO				EQU
-FAVAS				EQU
-CASTANHAS			EQU
-NOZ					EQU
-AMENDOIM			EQU
-CAFÉ				EQU
+
+;Memoria	
+LIMITEPESO			EQU			1000H
+INICIOPRODUTOS		EQU			0300H
+ICREMENTOPRODUTOS	EQU			0060H
+MUDANCACPM			EQU			0062H; isto e simplemente para mudar de
+;codigo de produto para um valor na memoria
+
 
 
 ; Display
-Display				EQU			200H
+Display				EQU			210H
 Display_end 		EQU			26FH
 CaracterVazio 		EQU 		20H			; Caracter para limpar o ecra
 
@@ -45,6 +27,10 @@ OLimpa				EQU 		3			; Opcao de Limpar
 
 ;StackPointer 		EQU 		6000H 
 
+Place 0060H
+incrementos:
+	WORD 96
+	WORD 100
 Place 0180H
 MostraBotoes:
 	String "Botoes em baixo "
@@ -87,7 +73,7 @@ Uvas:
 	String "Preco:          "
 	String "      5.34EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0360H
 Melancia:	
 	String "    Melancia    "
 	String "Peso :          "
@@ -95,7 +81,7 @@ Melancia:
 	String "Preco:          "
 	String "      1.87EUR/KG"
 	String "Total:          "
-	String "                "
+Place 03C0H
 Ananas:	
 	String "     Ananas     "
 	String "Peso :          "
@@ -103,7 +89,7 @@ Ananas:
 	String "Preco:          "
 	String "      1.87EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0420H
 Kiwi:	
 	String "      Kiwi      "
 	String "Peso :          "
@@ -111,7 +97,7 @@ Kiwi:
 	String "Preco:          "
 	String "      3.56EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0480H
 Pessego:	
 	String "     Pessego    "
 	String "Peso :          "
@@ -119,7 +105,7 @@ Pessego:
 	String "Preco:          "
 	String "      4.46EUR/KG"
 	String "Total:          "
-	String "                "
+Place 04E0H
 Framboesa:	
 	String "    Framboesa   "
 	String "Peso :          "
@@ -127,7 +113,7 @@ Framboesa:
 	String "Preco:          "
 	String "     17.81EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0540H
 Laranja:	
 	String "     Laranja    "
 	String "Peso :          "
@@ -135,15 +121,15 @@ Laranja:
 	String "Preco:          "
 	String "      1.60EUR/KG"
 	String "Total:          "
-	String "                "
-Tanjerina:	
-	String "    Tanjerina   "
+Place 05A0H
+Tangerina:	
+	String "    Tangerina   "
 	String "Peso :          "
 	String "                "
 	String "Preco:          "
 	String "      2.22EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0600H
 Cenoura:	
 	String "     Cenoura    "
 	String "Peso :          "
@@ -151,7 +137,7 @@ Cenoura:
 	String "Preco:          "
 	String "      1.04EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0660H
 Batata:	
 	String "     Batata     "
 	String "Peso :          "
@@ -159,7 +145,7 @@ Batata:
 	String "Preco:          "
 	String "      1.14EUR/KG"
 	String "Total:          "
-	String "                "
+Place 06C0H
 Nabo:	
 	String "      Nabo      "
 	String "Peso :          "
@@ -167,7 +153,7 @@ Nabo:
 	String "Preco:          "
 	String "      2.28EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0720H
 Beterraba:	
 	String "    Beterraba   "
 	String "Peso :          "
@@ -175,7 +161,7 @@ Beterraba:
 	String "Preco:          "
 	String "      5.23EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0780H
 Alho:	
 	String "      Alho      "
 	String "Peso :          "
@@ -183,7 +169,7 @@ Alho:
 	String "Preco:          "
 	String "      6.19EUR/KG"
 	String "Total:          "
-	String "                "
+Place 07E0H
 Cebola:	
 	String "     Cebola     "
 	String "Peso :          "
@@ -191,7 +177,7 @@ Cebola:
 	String "Preco:          "
 	String "     1.43EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0840H
 Ervilha:	
 	String "     Ervilha    "
 	String "Peso :          "
@@ -199,7 +185,7 @@ Ervilha:
 	String "Preco:          "
 	String "      1.42EUR/KG"
 	String "Total:          "
-	String "                "
+Place 08A0H
 Lentilhas:	
 	String "    Lentilhas   "
 	String "Peso :          "
@@ -207,7 +193,7 @@ Lentilhas:
 	String "Preco:          "
 	String "      2.19EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0900H
 Trigo:	
 	String "      Trigo     "
 	String "Peso :          "
@@ -215,7 +201,7 @@ Trigo:
 	String "Preco:          "
 	String "      0.95EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0960H
 Milho:	
 	String "      Milho     "
 	String "Peso :          "
@@ -223,7 +209,7 @@ Milho:
 	String "Preco:          "
 	String "      3.62EUR/KG"
 	String "Total:          "
-	String "                "
+Place 09C0H
 Favas:	
 	String "      Favas     "
 	String "Peso :          "
@@ -231,7 +217,7 @@ Favas:
 	String "Preco:          "
 	String "      4.07EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0A20H
 Castanhas:	
 	String "    Castanhas   "
 	String "Peso :          "
@@ -239,7 +225,7 @@ Castanhas:
 	String "Preco:          "
 	String "      8.92EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0A80H
 Noz:	
 	String "       Noz      "
 	String "Peso :          "
@@ -247,7 +233,7 @@ Noz:
 	String "Preco:          "
 	String "     18.39EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0AE0H
 Amendoim:	
 	String "    Amendoim    "
 	String "Peso :          "
@@ -255,7 +241,7 @@ Amendoim:
 	String "Preco:          "
 	String "      8.03EUR/KG"
 	String "Total:          "
-	String "                "
+Place 0B40H
 Cafe:	
 	String "      Cafe      "
 	String "Peso :          "
@@ -263,9 +249,30 @@ Cafe:
 	String "Preco:          "
 	String "     20.25EUR/KG"
 	String "Total:          "
+
+
+Place 0BA0H
+Banana:	
+	String "     Banana     "
+	String "Peso :          "
 	String "                "
+	String "Preco:          "
+	String "     2.58EUR/KG"
+	String "Total:          "
+Place 0C00H
+Morango:	
+	String "     Morango    "
+	String "Peso :          "
+	String "                "
+	String "Preco:          "
+	String "     4.46EUR/KG"
+	String "Total:          "
 
 
+	
+Place 1000H
+LimitePeso:
+	WORD 3000;maior que 30 kg
 
 
 Place 2000H
@@ -276,7 +283,6 @@ MenuInicio:
 	string "----------------"
 	String "4 - LIMPAR      "
 	String "    REGISTOS    "
-	String "                "
 
 Place 2080H
 MenuBalanca:
@@ -286,15 +292,13 @@ MenuBalanca:
 	string "                "
 	String "                "
 	String "                "
-	String "                "
 	
 Place 2100H
 MenuErro:
-	String "     ATEN��O    "
+	String "     ATENCAO    "
 	String "                "
-	String "      OP��O     "
+	String "      OPCAO     "
 	string "     ERRADA     "
-	String "                "
 	String "                "
 	String "                "	
 	
@@ -307,7 +311,7 @@ Place 3000H
 
 ;inicializar o stackpoint para o Call funcuonar
 pilha:
-	STACK 10H;
+	STACK 50H;
 StackPointer:
 
 Principio:
@@ -330,12 +334,6 @@ Le_Opcao:
 		JEQ Le_Opcao
 		CMP R1, MBalanca
 		JEQ OBalanca
-;		CMP R1, MAlmoco
-;		JEQ OBAlmoco		
-;		CMP R1, MSandes
-;		JEQ OSandes		
-;		CMP R1, MSopas
-;		JEQ OSopas	
 		CALL RotinaERRO
 		JMP ligado
 		
@@ -409,12 +407,14 @@ CicloLimpaPerifericos:; Para limpar os 2 brimeiros bits
 		ADD R3,R8
 		ADD R4,R8
 		ADD R5,R8
-		MOVB [R0], R6
-		MOVB [R1], R6
-		MOVB [R2], R6
-		MOVB [R3], R6
-		MOVB [R4], R6
-		MOVB [R5], R6
+		ADD R6,R8
+		MOVB [R0], R7
+		MOVB [R1], R7
+		MOVB [R2], R7
+		MOVB [R3], R7
+		MOVB [R4], R7
+		MOVB [R5], R7
+		MOVB [R6], R7
 		ADD R8, 1
 		CMP R8, 1
 		JEQ CicloLimpaPerifericos
@@ -454,5 +454,30 @@ CicloLimpa:
 ;  	 Balanca
 ;------------------	
 OBalanca:
-
-	JMP ligado;
+	;carrega o valor dos perifericos
+	MOV R0, PRODUTO
+	MOV R1, PESO
+	MOVB R2, [R0]	; R2 = PRODUTO
+	MOV R3, [R1]	; R3 = PESO
+	MOV R4, [LIMITEPESO]
+	CMP R2, 0; VERIFICAR SE O PRODUTO ESTA A 00
+	JEQ OBalanca
+	CMP R3,0; VERIFICAR SE O PESO ESTA A 00
+	JEQ OBalanca
+	CMP R4, R3	;VERIFICAR SE O PESO ULTRAPASSA 3000 QUE E BB0H
+	JLE RotinaERRO
+	MOV R5, INICIOPRODUTOS ; onde vamos guardar onde estamos nos menus
+	MOV R6, [ICREMENTOPRODUTOS]	; o valor que vai incrementar nos menus
+	MOV R4, [MUDANCACPM]
+	SUB R2,R4; aqui fica guardado no r2 qual e o produto
+CicloEncontraFruta:
+	CMP R2,0
+	JEQ BufferDisplay
+	ADD R5,R6
+	SUB R2, 1
+	JMP CicloEncontraFruta
+BufferDisplay:
+	MOV R2, R5
+	CALL MostraDisplay
+	CALL LimpaPerifericos
+	JMP OBalanca
