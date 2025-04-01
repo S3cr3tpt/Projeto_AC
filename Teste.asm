@@ -18,6 +18,22 @@ MFrio				EQU 		2			; Op��o de bebida fria
 
 StackPointer 		EQU 		6000H 
 
+Place 0190H
+MostraBotoes:
+	String "Botoes em baixo "
+
+Place 01A2H
+Bopcao:
+	String"Opcao         "
+
+Place 01B2H
+BOK:
+	String"Ok            "
+
+Place 01C2H
+Onoff:
+	String"On_off        "
+
 Place 2000H
 MenuInicio:
 	String " MENU PRINCIPAL "
