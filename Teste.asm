@@ -1,4 +1,4 @@
-; Perif�ricos
+; Perifericos
 ON_OFF				EQU			190H
 Sel_Nr_Menu			EQU			1A0H
 OK					EQU			1B0H
@@ -7,18 +7,25 @@ CANCEL				EQU			1D0H
 PESO				EQU			1E0H
 PRODUTO				EQU 		1F0H
 
-;Memoria	
+;Constantes
 LIMITEPESO			EQU			1000H
+PONTOASCII			EQU			1002H
+MASCARAANTESVIRGULA	EQU			1004H
+MASCARADPSVIRGULA	EQU			1006H
+;Memoria	
 INICIOPRODUTOS		EQU			0300H
-ICREMENTOPRODUTOS	EQU			0060H
+ICREMENTOPRODUTOS	EQU			0070H
 MUDANCACPM			EQU			0062H; isto e simplemente para mudar de
 ;codigo de produto para um valor na memoria
+DISTANCIAPESO		EQU			0064H
+DISTANCIAPESOPRECO	EQU			0066H
+DISTANCIAPRECOTOTAL	EQU			0068H
 
 
 
 ; Display
 Display				EQU			210H
-Display_end 		EQU			26FH
+Display_end 		EQU			27FH
 CaracterVazio 		EQU 		20H			; Caracter para limpar o ecra
 
 MBalanca			EQU 		1			; Opcao de Balanca
@@ -31,6 +38,9 @@ Place 0060H
 incrementos:
 	WORD 96
 	WORD 100
+	WORD 24
+	WORD 30
+	WORD 20
 Place 0180H
 MostraBotoes:
 	String "Botoes em baixo "
@@ -69,210 +79,239 @@ Place 0300H
 Uvas:	
 	String "      Uvas      "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      5.34EUR/KG"
 	String "Total:          "
-Place 0360H
+	String "                "
+Place 0370H
 Melancia:	
 	String "    Melancia    "
-	String "Peso :          "
+	String "              KG"
 	String "                "
 	String "Preco:          "
 	String "      1.87EUR/KG"
 	String "Total:          "
-Place 03C0H
+	String "                "
+
+Place 03E0H
 Ananas:	
 	String "     Ananas     "
-	String "Peso :          "
+	String "              KG"
 	String "                "
 	String "Preco:          "
 	String "      1.87EUR/KG"
 	String "Total:          "
-Place 0420H
+	String "             EUR"
+Place 0450H
 Kiwi:	
 	String "      Kiwi      "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      3.56EUR/KG"
 	String "Total:          "
-Place 0480H
+	String "             EUR"
+Place 04C0H
 Pessego:	
 	String "     Pessego    "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      4.46EUR/KG"
 	String "Total:          "
-Place 04E0H
+	String "             EUR"
+Place 0530H
 Framboesa:	
 	String "    Framboesa   "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "     17.81EUR/KG"
 	String "Total:          "
-Place 0540H
+	String "             EUR"
+Place 05A0H
 Laranja:	
 	String "     Laranja    "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      1.60EUR/KG"
 	String "Total:          "
-Place 05A0H
+	String "             EUR"
+Place 0610H
 Tangerina:	
 	String "    Tangerina   "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      2.22EUR/KG"
 	String "Total:          "
-Place 0600H
+	String "             EUR"
+Place 0680H
 Cenoura:	
 	String "     Cenoura    "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      1.04EUR/KG"
 	String "Total:          "
-Place 0660H
+	String "             EUR"
+Place 06F0H
 Batata:	
 	String "     Batata     "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      1.14EUR/KG"
 	String "Total:          "
-Place 06C0H
+	String "             EUR"
+Place 0760H
 Nabo:	
 	String "      Nabo      "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      2.28EUR/KG"
 	String "Total:          "
-Place 0720H
+	String "             EUR"
+Place 07D0H
 Beterraba:	
 	String "    Beterraba   "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      5.23EUR/KG"
 	String "Total:          "
-Place 0780H
+	String "             EUR"
+Place 0840H
 Alho:	
 	String "      Alho      "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      6.19EUR/KG"
 	String "Total:          "
-Place 07E0H
+	String "             EUR"
+Place 08B0H
 Cebola:	
 	String "     Cebola     "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "     1.43EUR/KG"
 	String "Total:          "
-Place 0840H
+	String "             EUR"
+Place 0920H
 Ervilha:	
 	String "     Ervilha    "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      1.42EUR/KG"
 	String "Total:          "
-Place 08A0H
+	String "             EUR"
+Place 0990H
 Lentilhas:	
 	String "    Lentilhas   "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      2.19EUR/KG"
 	String "Total:          "
-Place 0900H
+	String "             EUR"
+Place 0A00H
 Trigo:	
 	String "      Trigo     "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      0.95EUR/KG"
 	String "Total:          "
-Place 0960H
+	String "             EUR"
+Place 0A70H
 Milho:	
 	String "      Milho     "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      3.62EUR/KG"
 	String "Total:          "
-Place 09C0H
+	String "             EUR"
+Place 0AE0H
 Favas:	
 	String "      Favas     "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      4.07EUR/KG"
 	String "Total:          "
-Place 0A20H
+	String "             EUR"
+Place 0B50H
 Castanhas:	
 	String "    Castanhas   "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      8.92EUR/KG"
 	String "Total:          "
-Place 0A80H
+	String "             EUR"
+Place 0BC0H
 Noz:	
 	String "       Noz      "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "     18.39EUR/KG"
 	String "Total:          "
-Place 0AE0H
+	String "             EUR"
+Place 0C30H
 Amendoim:	
 	String "    Amendoim    "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "      8.03EUR/KG"
 	String "Total:          "
-Place 0B40H
+	String "             EUR"
+Place 0CA0H
 Cafe:	
 	String "      Cafe      "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "     20.25EUR/KG"
 	String "Total:          "
+	String "             EUR"
 
 
-Place 0BA0H
+Place 0D10H
 Banana:	
 	String "     Banana     "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "     2.58EUR/KG"
 	String "Total:          "
-Place 0C00H
+	String "             EUR"
+Place 0D80H
 Morango:	
 	String "     Morango    "
 	String "Peso :          "
-	String "                "
+	String "              KG"
 	String "Preco:          "
 	String "     4.46EUR/KG"
 	String "Total:          "
+	String "             EUR"
 
 
 	
 Place 1000H
-LimitePeso:
-	WORD 3000;maior que 30 kg
+Constantes:
+	WORD 30000; maior que 30 kg
+	WORD 46	; PONTO EM ASCII
+	WORD 255; 00FFH
+	WORD 65280; FF00H
 
 
 Place 2000H
@@ -286,13 +325,14 @@ MenuInicio:
 
 Place 2080H
 MenuBalanca:
-	String "  MENU BEBIDAS  "
-	String "1 - QUENTES     "
-	String "2 - FRIAS       "
-	string "                "
+	String "  MENU BALANCA  "
+	String "   POR FAVOR    "
+	String "    INSIRA      "
+	String "   O PESO E O   "
+	String "    PRODUTO     "
 	String "                "
 	String "                "
-	
+
 Place 2100H
 MenuErro:
 	String "     ATENCAO    "
@@ -301,7 +341,8 @@ MenuErro:
 	string "     ERRADA     "
 	String "                "
 	String "                "	
-	
+	String "                "
+
 Place 0000H
 Inicio:	
 		MOV R0, Principio
@@ -333,11 +374,23 @@ Le_Opcao:
 		CMP R1, 0
 		JEQ Le_Opcao
 		CMP R1, MBalanca
-		JEQ OBalanca
+		JEQ BufferBalanca
 		CALL RotinaERRO
 		JMP ligado
 		
-		
+BufferBalanca:
+	MOV R1, OK
+	MOVB R3, [R1] ; R3 = VALOR QUE ESTA NO OK
+	CMP R3, 0
+	JLE	BufferBalanca
+	MOV R1, CANCEL
+	MOVB R3, [R1] ; R3 = VALOR QUE ESTA NO CANCEL	
+	CMP R3, 1
+	JEQ	ligado
+	MOV R2, MenuBalanca
+	CALL MostraDisplay
+	CALL LimpaPerifericos
+	JMP OBalanca
 
 ;------------------
 ;   Rotina Erro
@@ -457,15 +510,19 @@ OBalanca:
 	;carrega o valor dos perifericos
 	MOV R0, PRODUTO
 	MOV R1, PESO
+	MOV R7, OK
+	MOVB R8, [R7]	; R8 = BOTAO DE OK
 	MOVB R2, [R0]	; R2 = PRODUTO
 	MOV R3, [R1]	; R3 = PESO
 	MOV R4, [LIMITEPESO]
 	CMP R2, 0; VERIFICAR SE O PRODUTO ESTA A 00
-	JEQ OBalanca
+	JLE OBalanca
 	CMP R3,0; VERIFICAR SE O PESO ESTA A 00
-	JEQ OBalanca
+	JLE OBalanca
 	CMP R4, R3	;VERIFICAR SE O PESO ULTRAPASSA 3000 QUE E BB0H
 	JLE RotinaERRO
+	CMP R8, 0
+	JLE OBalanca
 	MOV R5, INICIOPRODUTOS ; onde vamos guardar onde estamos nos menus
 	MOV R6, [ICREMENTOPRODUTOS]	; o valor que vai incrementar nos menus
 	MOV R4, [MUDANCACPM]
@@ -478,6 +535,38 @@ CicloEncontraFruta:
 	JMP CicloEncontraFruta
 BufferDisplay:
 	MOV R2, R5
+	CALL EditarPrint
 	CALL MostraDisplay
 	CALL LimpaPerifericos
 	JMP OBalanca
+EditarPrint:
+	PUSH R6
+	PUSH R7
+	PUSH R8
+	PUSH R9
+	PUSH TEMP
+	MOV R6, [DISTANCIAPESO]; mete em r6 a distancia ao peso
+	MOV R7, R5
+	MOV R8, [MASCARAANTESVIRGULA]
+	MOV R9, [MASCARADPSVIRGULA]
+	MOV TEMP, [PONTOASCII]
+	AND R8, R3 ; Vai buscar os digitos antes da virgula
+	AND R9, R3 ;Vai buscar os numeros depois da virgula
+	SHR R9,8
+	ADD R7,R6
+	MOV [R7],R8;Coloca a parte inteira
+	ADD R7,2;avanca
+	MOV [R7], TEMP; coloca o ponto
+	ADD R7,2;avanca
+	MOV [R7], R9;coloca a parte decimal
+	MOV R6, [DISTANCIAPESOPRECO]
+	ADD R7,R6	;POE O APONTADOR R7 PARA O PRECO
+	MOV R8, [R7] ; Coloca a parte decimal do preco em R8
+
+
+	POP TEMP
+	POP R9
+	POP R8
+	POP R7
+	POP R6
+	RET
