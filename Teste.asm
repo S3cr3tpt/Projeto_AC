@@ -12,14 +12,16 @@ LIMITEPESO			EQU			1000H
 PONTOASCII			EQU			1002H
 MASCARAANTESVIRGULA	EQU			1004H
 MASCARADPSVIRGULA	EQU			1006H
+NUMERO0ASCII		EQU			1008H
+NUMERO9ASCII		EQU			100AH
 ;Memoria	
 INICIOPRODUTOS		EQU			0300H
-ICREMENTOPRODUTOS	EQU			0070H
+ICREMENTOPRODUTOS	EQU			0060H
 MUDANCACPM			EQU			0062H; isto e simplemente para mudar de
 ;codigo de produto para um valor na memoria
 DISTANCIAPESO		EQU			0064H
-DISTANCIAPESOPRECO	EQU			0066H
-DISTANCIAPRECOTOTAL	EQU			0068H
+DISTANCIAPRECO		EQU			0066H
+DISTANCIATOTAL		EQU			0068H
 
 
 
@@ -36,11 +38,11 @@ OLimpa				EQU 		3			; Opcao de Limpar
 
 Place 0060H
 incrementos:
-	WORD 96
+	WORD 112
 	WORD 100
-	WORD 24
-	WORD 30
-	WORD 20
+	WORD 36
+	WORD 70
+	WORD 86
 Place 0180H
 MostraBotoes:
 	String "Botoes em baixo "
@@ -304,7 +306,6 @@ Morango:
 	String "Total:          "
 	String "             EUR"
 
-
 	
 Place 1000H
 Constantes:
@@ -312,6 +313,8 @@ Constantes:
 	WORD 46	; PONTO EM ASCII
 	WORD 255; 00FFH
 	WORD 65280; FF00H
+	WORD 48	;NUMERO 0 EM ASCII
+	WORD 57 ;NUMERO 9 EM ASCII
 
 
 Place 2000H
@@ -356,6 +359,8 @@ pilha:
 StackPointer:
 
 Principio:
+		CMP R1,1
+		JEQ ligado
 		MOV SP, StackPointer
 		CALL LimpaDisplay
 		CALL LimpaPerifericos
@@ -483,7 +488,8 @@ CicloLimpaPerifericos:; Para limpar os 2 brimeiros bits
 ;------------------
 ;  Limpa Display
 ;------------------	
-		
+
+	
 LimpaDisplay:
 		PUSH R0
 		PUSH R1
@@ -500,7 +506,15 @@ CicloLimpa:
 		POP R1
 		POP R0		
 		RET		
-
+;-----------------------------------------------------
+;Isto e simplemente para dar clear nos registos pois 
+;estamos a assumir que so pode ter uma vez cada fruta
+;e o Total e o registo que vai ficar
+;-----------------------------------------------------
+ClearRegistos:
+	MOV R1,1
+	MOV R2, INICIOPRODUTOS
+	JMP R2; salta para dar refresh nos produtos
 
 
 ;------------------
@@ -544,11 +558,14 @@ EditarPrint:
 	PUSH R7
 	PUSH R8
 	PUSH R9
+	PUSH R10
 	PUSH TEMP
 	MOV R6, [DISTANCIAPESO]; mete em r6 a distancia ao peso
 	MOV R7, R5
 	MOV R8, [MASCARAANTESVIRGULA]
 	MOV R9, [MASCARADPSVIRGULA]
+	MOV R10,[NUMERO0ASCII] ; COLOCAR O NUMERO 0 ASCII EM R10 MUDAR ISTO PARA DINAMICO DEPOIS
+
 	MOV TEMP, [PONTOASCII]
 	AND R8, R3 ; Vai buscar os digitos antes da virgula
 	AND R9, R3 ;Vai buscar os numeros depois da virgula
@@ -559,14 +576,29 @@ EditarPrint:
 	MOV [R7], TEMP; coloca o ponto
 	ADD R7,2;avanca
 	MOV [R7], R9;coloca a parte decimal
-	MOV R6, [DISTANCIAPESOPRECO]
+	MOV R6, [DISTANCIAPRECO] ; coloca a distancia ao preco para ir buscalo
+	MOV R7, R5	; volta ao inicio para o incremento estar certo
 	ADD R7,R6	;POE O APONTADOR R7 PARA O PRECO
-	MOV R8, [R7] ; Coloca a parte decimal do preco em R8
+	MOVB R8, [R7] ; Coloca a parte decimal do preco em R8
+	
 
 
 	POP TEMP
+	POP R10
 	POP R9
 	POP R8
 	POP R7
 	POP R6
 	RET
+
+; COMO FAZER AS MULTIPLICACOES, IR BUSCAR O NUMERO ANTESW
+;BASICAMENTE IR PARA A POSICAO ANTESERIROR E GUARDAR ESSE
+;DEPOIS IR BUSCAR O PROXIMO E USAR A MASCARA E UM BITSHIFT
+;PARA CONSEGUIR O VALOR PRETENDIDO OU SO USAR UM MOVB
+;DEPOIS IR BUSCAR OS VALORES DECIMAIS
+;TIRAR 48 DO VALOR ORIGINAL POIS OS NUMEROS SAO EM EXADECIMAL E ASCII
+; PARA DEPOIS FAZER A MULTIPLICACAO COM AS UNIDADES
+; PARA DEPOIS FAZER COM AS DECIMAS E SE A MULTIPLICACAO COM AS DECIMAS DER 
+;3 DIGITOS EU TIRO O TERCEIRO E ADICIONO O AO VALOR DECIMAL
+; DEOPOIS BASTA COLOCAR OS VALORES OUTRAVEZ EM heXADECIMAL DE ASCII 
+; E COLOCALOS NA TABELA
