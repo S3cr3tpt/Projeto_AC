@@ -41,7 +41,7 @@ incrementos:
 	WORD 112
 	WORD 100
 	WORD 36
-	WORD 70
+	WORD 68
 	WORD 86
 Place 0180H
 MostraBotoes:
@@ -580,6 +580,8 @@ EditarPrint:
 	MOV R7, R5	; volta ao inicio para o incremento estar certo
 	ADD R7,R6	;POE O APONTADOR R7 PARA O PRECO
 	MOVB R8, [R7] ; Coloca a parte decimal do preco em R8
+	ADD R7, 2; avanca para a casa das unidades 
+	;Fazer o AND com "NUMERODPSVIRGULA"
 	
 
 
