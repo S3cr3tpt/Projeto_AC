@@ -559,14 +559,16 @@ EditarPrint:
 	PUSH R8
 	PUSH R9
 	PUSH R10
+	PUSH R11
 	PUSH TEMP
+
 	MOV R6, [DISTANCIAPESO]; mete em r6 a distancia ao peso
 	MOV R7, R5
-	MOV R8, [MASCARAANTESVIRGULA]
-	MOV R9, [MASCARADPSVIRGULA]
+	MOV R8, [MASCARAANTESVIRGULA];colocaar em R8 00FF
+	MOV R9, [MASCARADPSVIRGULA]; colocar em R9 FF00
 	MOV R10,[NUMERO0ASCII] ; COLOCAR O NUMERO 0 ASCII EM R10 MUDAR ISTO PARA DINAMICO DEPOIS
-
 	MOV TEMP, [PONTOASCII]
+
 	AND R8, R3 ; Vai buscar os digitos antes da virgula
 	AND R9, R3 ;Vai buscar os numeros depois da virgula
 	SHR R9,8
@@ -581,11 +583,26 @@ EditarPrint:
 	ADD R7,R6	;POE O APONTADOR R7 PARA O PRECO
 	MOVB R8, [R7] ; Coloca a parte decimal do preco em R8
 	ADD R7, 2; avanca para a casa das unidades 
-	;Fazer o AND com "NUMERODPSVIRGULA"
-	
+	MOV R11, [R7]	;Colocar o valor da casa das unidades e o "ponto" para R11
+	MOV TEMP, [MASCARADPSVIRGULA]; Colocar a mascara em TEMP
+	AND R11, TEMP; Fazer colocar os ultimo bit a 0 Pois e o "ponto"
+	SHR R11,8; Mover 8 bits para a direita para ficar os bits na casa unidade
+	CMP R8, R10;verificar se o valor recebito em R8 era 0
+	JLE SomaUnidades ; salta para o SomaUnidades se o falor recebido for 0
+	SUB R8, R10 ; passa o valor R8 de ASCII para unidade
+	ADD R8, 5; Adicionar 5 de cada vez pois nao da para adicionar 10 de uma vez
+	ADD R8, 5; adicionar o outro 5
+SomaUnidades:; ATE aqui esta tudo a funcionar
+	SUB R11, R10; Transforma o R11 de ASCII para unidades
+	ADD R8,R11; Colocar o Valor da soma no R8
+	;agora tenho o Preco por kilo em unidades, quero agora multiplicar pelo peso
+	;e depois disso ir buscar o valor das decimas para multiplicar Pelo preco 
+	;e se o resultado obtido for maior que 99, entao subtrarir 100 
+	;e adicionar uma unidade no valor real
 
 
 	POP TEMP
+	POP R11
 	POP R10
 	POP R9
 	POP R8
