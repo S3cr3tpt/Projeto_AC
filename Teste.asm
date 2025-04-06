@@ -19,7 +19,7 @@ NUMERO10			EQU			100EH
 NUMEROPRODUTOS		EQU			1010H
 ;Memoria	
 INICIOPRODUTOS		EQU			0300H
-ICREMENTOPRODUTOS	EQU			0060H
+INCERMENTOPRODUTOS	EQU			0060H
 MUDANCACPM			EQU			0062H; isto e simplemente para mudar de
 ;codigo de produto para um valor na memoria
 DISTANCIAPESO		EQU			0064H
@@ -88,22 +88,22 @@ Uvas:
 	String "Preco:          "
 	String "      5.34EUR/KG"
 	String "Total:          "
-	String "                "
+	String "             EUR"
 Place 0370H
 Melancia:	
 	String "    Melancia    "
+	String "Peso :          "
 	String "              KG"
-	String "                "
 	String "Preco:          "
 	String "      1.87EUR/KG"
 	String "Total:          "
-	String "                "
+	String "             EUR"
 
 Place 03E0H
 Ananas:	
 	String "     Ananas     "
+	String "Peso :          "
 	String "              KG"
-	String "                "
 	String "Preco:          "
 	String "      1.87EUR/KG"
 	String "Total:          "
@@ -320,7 +320,7 @@ Constantes:
 	WORD 57 ;NUMERO 9 EM ASCII
 	WORD 100; Valor a ser comparado para as decimas
 	WORD 10 ; Valor a ser Multiplicado p
-	WORD 25 ;Numero de produtos +1
+	WORD 26 ;Numero de produtos +1
 
 
 Place 2000H
@@ -383,8 +383,7 @@ pilha:
 StackPointer:
 
 Principio:
-	CMP R1,1
-	JEQ ligado
+
 	MOV SP, StackPointer
 	CALL LimpaDisplay
 	CALL LimpaPerifericos
@@ -399,22 +398,24 @@ ligado:
 	CALL LimpaPerifericos
 Le_Opcao:
 	MOV R0, Sel_Nr_Menu
+	MOV R3, [OK]
 	MOVB R1, [R0]
-	CMP R1, 0
-	JEQ Le_Opcao
+	CMP R3,0; Caso o OK esteja a 0 entao volta atras
+	JLE Le_Opcao;volta atras
+	CMP R1, 0;caso nada seja selecionado volta atras
+	JEQ Le_Opcao; volta atras
 	CMP R1, MBalanca;OPCAO 1
 	JEQ BufferBalanca
 	CMP R1, MRegistos;OPCAO 2
-	;falta a OPCAO PARA MOSTRAR OS REGISTOS
-	JEQ Le_Opcao; Isto e so temporario
-	CMP R1, OLimpa
-	JEQ BufferConfirmacao;
+	JEQ BufferMostraDisplayProdutos
+	CMP R1, OLimpa; Opcao 3
+	CALL ConfirmacaoClear;
+	CMP R1,1
+	JEQ ligado
 	CALL RotinaERRO
 	JMP ligado
 
-BufferConfirmacao:
-	CALL ConfirmacaoClear; Vai para a confirmacao de clear
-	JMP ligado; Depois de limpar volta a tras
+
 BufferBalanca:
 	MOV R1, OK
 	MOVB R3, [R1] ; R3 = VALOR QUE ESTA NO OK
@@ -461,7 +462,7 @@ RotinaERROBalanca:
 	POP R2;
 	POP R8;
 	RET 
-		
+
 MostraDisplay:
 	PUSH R0
 	PUSH R1
@@ -479,7 +480,79 @@ Ciclo:
 	POP R2
 	POP R1
 	RET
-		
+
+
+;----------------------
+;MostraDisplay Produtos
+;----------------------
+BufferMostraDisplayProdutos:
+	CALL MostraDisplayProdutos
+	JMP ligado
+MostraDisplayProdutos:
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	PUSH R5
+	PUSH R6
+	PUSH R7
+	PUSH R8
+	PUSH R9
+	PUSH R10
+	PUSH TEMP
+ 	MOV R0, Display; Coloca em R0 o  apontador para o inicio do display
+	MOV R1, Display_end; coloca em R1 o apontador para o fim do disply
+	MOV R2, INICIOPRODUTOS; Coloca o apontador de R2 para o inicio dos produtos
+	MOV R6, 0; inicia o Contador para saber em qual produto estamos
+	MOV R7, [MUDANCACPM]; Coloca em R7 100  por causa do codigo do produto
+	MOV R8, [INCERMENTOPRODUTOS]; Coloca em R8 o valor para passar ao proximo produto
+	MOV R9, [NUMEROPRODUTOS]; Coloca o numero de produtos em R9
+	MOV R10, 8; Coloca 8 em R10 para verificar se ja acabou a linha
+	CALL LimpaPerifericos; Para apagar os valores do OK
+LoopDisplay:
+	MOV TEMP,CANCEL ;COloca a variavel temporaria a apontar para o cancel
+	MOVB R5, [TEMP]; Coloca em R5 o registo que esta em CANCEL
+	MOV TEMP, OK; COloca o apontador par ok em TEMP
+	MOVB R4, [Temp]; COloca em R4 o valor do enderenco Temp
+	MOV TEMP, 0; Coloca a variavel temporaria a 0
+	CMP R5, 1; Verifica se o utilizador quer cancelar
+	JEQ AcabaDisplay; Acaba o display e volta a aparecer o menu
+	CMP R4, 0; Verifica se o utilizador quer continuar
+	JLE LoopDisplay; Volta atras caso nao quira
+LoopLinhaDisplay:
+	ADD R6, 1; Incrementa 1 nos produtos
+	CMP R9, R6; Verifica se ja acabou os produtos
+	JLE AcabaDisplay; Se ja estiver ultrapassado o numero de produtos acaba
+	ADD TEMP, 1; Adiciona 1 a variavel temporaria
+	CMP TEMP, R10; verifica se a primeira linha ja foi escrita
+	JEQ BufferDisplayLinha; Vai incrementar para o poximo produto e depois voltar atras;
+	MOV R4, [R2]; Coloca em R4 o valor que esta em R2, estou a reutilizar para poupar memoria
+	MOV [R0], R4; Coloca no Display o valor de R2
+	ADD R2, 2; avanca na casa do prodito
+	ADD R0,2; avanca no display
+	CMP R0, R1; Se o display ja acabou entao volta atras
+	JLE LoopDisplay; VOlta atras para o depois voltar a dar print
+BufferDisplayLinha:	
+	SUB R2, R10; Volta atras 8 casas
+	SUB R2, R10; Volta ao inicio do produto 
+	ADD R2, R8; Passa ao proximo produto
+	JMP LoopLinhaDisplay; passa a proxima linha do display
+AcabaDisplay:
+	POP TEMP
+    POP R10
+	POP R9
+	POP R8
+	POP R7
+	POP R6
+	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	CALL LimpaPerifericos
+	RET
 ;--------------------
 ; Limpa Perifericos
 ;--------------------				
@@ -554,32 +627,60 @@ CicloLimpa:
 ;estamos a assumir que so pode ter uma vez cada fruta
 ;e o Total e o registo que vai ficar
 ;-----------------------------------------------------
+
 ConfirmacaoClear:
-	PUSH R2
-	PUSH R3
 	MOV R2, MenuConfirmacaoClear ;coloca o apontador para o inicio do menu em R2
 	CALL MostraDisplay; Mostra o menu 
 	CALL LimpaPerifericos; limpa os perifericos
 LoopClear:
-	MOV R3,[OK]; Le o botao de OK
+	MOV TEMP,OK; COloca em TEMP o endereco de OK
+	MOVB R3,[TEMP]; Le o botao de OK
 	CMP R3, 1; Verifica se esta a 1
 	JEQ ClearRegistos;Apaga todos os registos
-	MOV R3, [CANCEL]; le o botao de cancelar em r3
+	MOV TEMP, CANCEL; COloca o endereco de Cancel EM TEMP
+	MOVB R3, [TEMP]; le o botao de cancelar em r3
 	CMP R3, 1; Verifica se o botao de cancelar esta ativo
 	JEQ BufferClear; Volta para o menu anterior
-	POP R3
-	POP R2
-	RET
-
-BufferClear:
-	POP R3
-	POP R2
-	RET
+	JMP LoopClear; Volta atras caso o utilizador nao escolha
 ClearRegistos:
+	MOV R0, [INCERMENTOPRODUTOS]; Coloca em R0, o incremento para o proximo produto
+	MOV R10, [NUMEROPRODUTOS]; Coloca o numero de produtos em R10
+	MOV R11, 0; Coloca em R11 o contador
+	MOV R2, INICIOPRODUTOS; coloca o apontador para o incio em R2
+LoopRemover:
+	ADD R11,1; Adiciona 1 ao contador
+	CMP R11,R10; COmpara para ver se ja cheou ao final
+	JEQ BufferClear; ACaba
+	MOV R5,R2; Copia tambem para o R5
+	MOV R6, [DISTANCIAPESO]; Coloca em R6 a disancia ao peso
+	MOV R7,CaracterVazio ; Colloca 20H em R7
+	ADD R5, R6; Vai para o Peso
+	MOV [R5], R7; Apaga a primeira casa do peso
+	ADD R5, 2;avanca
+	MOV [R5], R7;apaga a segunda casa do peso
+	ADD R5, 2;avanca
+	MOV [R5], R7;apaga a terceira casa do peso
+	ADD R5, 2;avanca
+	MOV [R5], R7;apaga a Quarta casa do peso
+	ADD R5, 2;avanca
+	MOV [R5], R7;apaga a quinta casa do peso
+	MOV R6, [DISTANCIATOTAL]
+	MOV R5,R2
+	ADD R5,R6
+	MOV [R5], R7; Apaga o total
+	ADD R5, 2;avanca
+	MOV [R5], R7; Apaga o total
+	ADD R5, 2;avanca
+	MOV [R5], R7; Apaga o total
+	ADD R5, 2;avanca
+	MOV [R5], R7; Apaga o total
+	ADD R5, 2;avanca
+	MOV [R5], R7;
+	ADD R2,R0
+	JMP LoopRemover
+BufferClear:
 	MOV R1,1
-	MOV R2, INICIOPRODUTOS
-	JMP R2; salta para dar refresh nos produtos
-
+	RET
 
 ;------------------
 ;  	 Balanca
@@ -607,7 +708,7 @@ OBalanca:
 	CMP R8, 0; verifica se o botao de ok esta a 1
 	JLE OBalanca
 	MOV R5, INICIOPRODUTOS ; onde vamos guardar onde estamos nos menus
-	MOV R6, [ICREMENTOPRODUTOS]	; o valor que vai incrementar nos menus
+	MOV R6, [INCERMENTOPRODUTOS]	; o valor que vai incrementar nos menus
 
 CicloEncontraFruta:
 	CMP R2,0
@@ -711,8 +812,6 @@ ColocaDecimas:
 	POP R6
 	RET
 
-;Falta Fazer um Botao de reset que utiliza a funcao ClearRegistos e o botao de cancelar funcionar aqui tambem
 ;Falta na parte das opcoes e perciso let tambem quando o valor e 2 e 3 
 ; Valor 2 Ver os registos Ja feitos
-; Valor 3 Usar o ClearRegistos
 ;Falta fazer o change quando ja esta no menu da balanca que mostra ao utilizador todos os produtos
