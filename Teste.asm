@@ -16,6 +16,7 @@ NUMERO0ASCII		EQU			1008H
 NUMERO9ASCII		EQU			100AH
 NUMERO100			EQU			100CH
 NUMERO10			EQU			100EH
+NUMEROPRODUTOS		EQU			1010H
 ;Memoria	
 INICIOPRODUTOS		EQU			0300H
 ICREMENTOPRODUTOS	EQU			0060H
@@ -318,7 +319,8 @@ Constantes:
 	WORD 48	;NUMERO 0 EM ASCII
 	WORD 57 ;NUMERO 9 EM ASCII
 	WORD 100; Valor a ser comparado para as decimas
-	WORD 10;
+	WORD 10 ; Valor a ser Multiplicado p
+	WORD 25 ;Numero de produtos +1
 
 
 Place 2000H
@@ -327,7 +329,7 @@ MenuInicio:
 	String "1 - BALANCA     "
 	String "2 - REGISTOS    "
 	string "----------------"
-	String "4 - LIMPAR      "
+	String "3 - LIMPAR      "
 	String "    REGISTOS    "
 
 Place 2080H
@@ -342,13 +344,31 @@ MenuBalanca:
 
 Place 2100H
 MenuErro:
-	String "     ATENCAO    "
+	String "    ATENCAO     "
 	String "                "
-	String "      OPCAO     "
-	string "     ERRADA     "
+	String "    OPCAO       "
+	string "    ERRADA      "
 	String "                "
 	String "                "	
 	String "                "
+
+Place 2180H
+MenuDadosErrados:
+	String "                "
+	String "    ATENCAO     "
+	String "    VERIFIQUE   "
+	String "    OS DADOS    "
+	String "    INSERIDOS   "
+	String "                "
+Place 21F0H
+MenuConfirmacaoClear:
+	String "                "
+	String "    ATENCAO     "
+	String "    ISTO IRA    "
+	String "    APAGAR TODOS"
+	String "    OS DADOS    "
+	String "    INSERIDOS   "
+
 
 Place 0000H
 Inicio:	
@@ -363,30 +383,38 @@ pilha:
 StackPointer:
 
 Principio:
-		CMP R1,1
-		JEQ ligado
-		MOV SP, StackPointer
-		CALL LimpaDisplay
-		CALL LimpaPerifericos
-		MOV R0, ON_OFF
+	CMP R1,1
+	JEQ ligado
+	MOV SP, StackPointer
+	CALL LimpaDisplay
+	CALL LimpaPerifericos
+	MOV R0, ON_OFF
 Liga:
-		MOVB R1, [R0]
-		CMP R1, 1
-		JNE Liga
+	MOVB R1, [R0]
+	CMP R1, 1
+	JNE Liga
 ligado:	
-		MOV R2, MenuInicio
-		CALL MostraDisplay
-		CALL LimpaPerifericos
+	MOV R2, MenuInicio
+	CALL MostraDisplay
+	CALL LimpaPerifericos
 Le_Opcao:
-		MOV R0, Sel_Nr_Menu
-		MOVB R1, [R0]
-		CMP R1, 0
-		JEQ Le_Opcao
-		CMP R1, MBalanca
-		JEQ BufferBalanca
-		CALL RotinaERRO
-		JMP ligado
-		
+	MOV R0, Sel_Nr_Menu
+	MOVB R1, [R0]
+	CMP R1, 0
+	JEQ Le_Opcao
+	CMP R1, MBalanca;OPCAO 1
+	JEQ BufferBalanca
+	CMP R1, MRegistos;OPCAO 2
+	;falta a OPCAO PARA MOSTRAR OS REGISTOS
+	JEQ Le_Opcao; Isto e so temporario
+	CMP R1, OLimpa
+	JEQ BufferConfirmacao;
+	CALL RotinaERRO
+	JMP ligado
+
+BufferConfirmacao:
+	CALL ConfirmacaoClear; Vai para a confirmacao de clear
+	JMP ligado; Depois de limpar volta a tras
 BufferBalanca:
 	MOV R1, OK
 	MOVB R3, [R1] ; R3 = VALOR QUE ESTA NO OK
@@ -406,88 +434,99 @@ BufferBalanca:
 ;------------------			
 		
 RotinaERRO:
-		PUSH R0
-		PUSH R1
-		PUSH R2
-		MOV R2, MenuErro
-		CALL MostraDisplay
-		CALL LimpaPerifericos		
-		MOV R0, OK
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	MOV R2, MenuErro
+	CALL MostraDisplay
+	CALL LimpaPerifericos		
+	MOV R0, OK
 ERRO:
-		MOVB R1, [R0]
-		CMP R1, 1
-		JNE ERRO
-		POP R2
-		POP R1
-		POP R0
-		RET
+	MOVB R1, [R0]
+	CMP R1, 1
+	JNE ERRO
+	POP R2
+	POP R1
+	POP R0
+	RET
 
+RotinaERROBalanca:
+	PUSH R8
+	PUSH R2
+	MOV R8,0
+	MOV R2, MenuDadosErrados
+	CALL MostraDisplay
+	CALL LimpaPerifericos
+	
+	POP R2;
+	POP R8;
+	RET 
 		
 MostraDisplay:
-		PUSH R0
-		PUSH R1
-		PUSH R3
-		MOV R0, Display
-		MOV R1, Display_end
+	PUSH R0
+	PUSH R1
+	PUSH R3
+	MOV R0, Display
+	MOV R1, Display_end
 Ciclo:	
-		MOV R3, [R2]
-		MOV [R0], R3
-		ADD R2, 2
-		ADD R0, 2
-		CMP R0, R1
-		JLE Ciclo
-		POP R3
-		POP R2
-		POP R1
-		RET
+	MOV R3, [R2]
+	MOV [R0], R3
+	ADD R2, 2
+	ADD R0, 2
+	CMP R0, R1
+	JLE Ciclo
+	POP R3
+	POP R2
+	POP R1
+	RET
 		
 ;--------------------
 ; Limpa Perifericos
 ;--------------------				
 			
 LimpaPerifericos:
-		PUSH R0
-		PUSH R1
-		PUSH R2
-		PUSH R3
-		PUSH R4
-		PUSH R5
-		PUSH R6
-		MOV R0, ON_OFF
-		MOV R1, Sel_Nr_Menu
-		MOV R2, OK
-		MOV R3, CHANGE
-		MOV R4, CANCEL
-		MOV R5, PESO 
-		MOV R6, PRODUTO
-		MOV R7, 0
-		MOV R8, 0
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	PUSH R5
+	PUSH R6
+	MOV R0, ON_OFF
+	MOV R1, Sel_Nr_Menu
+	MOV R2, OK
+	MOV R3, CHANGE
+	MOV R4, CANCEL
+	MOV R5, PESO 
+	MOV R6, PRODUTO
+	MOV R7, 0
+	MOV R8, 0
 CicloLimpaPerifericos:; Para limpar os 2 brimeiros bits
-		ADD R0,R8		
-		ADD R1,R8
-		ADD R2,R8
-		ADD R3,R8
-		ADD R4,R8
-		ADD R5,R8
-		ADD R6,R8
-		MOVB [R0], R7
-		MOVB [R1], R7
-		MOVB [R2], R7
-		MOVB [R3], R7
-		MOVB [R4], R7
-		MOVB [R5], R7
-		MOVB [R6], R7
-		ADD R8, 1
-		CMP R8, 1
-		JEQ CicloLimpaPerifericos
-		POP R6
-		POP R5
-		POP R4
-		POP R3
-		POP R2
-		POP R1
-		POP R0
-		RET
+	ADD R0,R8		
+	ADD R1,R8
+	ADD R2,R8
+	ADD R3,R8
+	ADD R4,R8
+	ADD R5,R8
+	ADD R6,R8
+	MOVB [R0], R7
+	MOVB [R1], R7
+	MOVB [R2], R7
+	MOVB [R3], R7
+	MOVB [R4], R7
+	MOVB [R5], R7
+	MOVB [R6], R7
+	ADD R8, 1
+	CMP R8, 1
+	JEQ CicloLimpaPerifericos
+	POP R6
+	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	RET
 
 ;------------------
 ;  Limpa Display
@@ -495,26 +534,47 @@ CicloLimpaPerifericos:; Para limpar os 2 brimeiros bits
 
 	
 LimpaDisplay:
-		PUSH R0
-		PUSH R1
-		PUSH R2		
-		MOV R0, Display
-		MOV R1, Display_end
+	PUSH R0
+	PUSH R1
+	PUSH R2		
+	MOV R0, Display
+	MOV R1, Display_end
 CicloLimpa:	
-		MOV R2, CaracterVazio
-		MOVB [R0], R2
-		ADD R0, 1
-		CMP R0, R1
-		JLE CicloLimpa
-		POP R2
-		POP R1
-		POP R0		
-		RET		
+	MOV R2, CaracterVazio
+	MOVB [R0], R2
+	ADD R0, 1
+	CMP R0, R1
+	JLE CicloLimpa
+	POP R2
+	POP R1
+	POP R0		
+	RET		
 ;-----------------------------------------------------
 ;Isto e simplemente para dar clear nos registos pois 
 ;estamos a assumir que so pode ter uma vez cada fruta
 ;e o Total e o registo que vai ficar
 ;-----------------------------------------------------
+ConfirmacaoClear:
+	PUSH R2
+	PUSH R3
+	MOV R2, MenuConfirmacaoClear ;coloca o apontador para o inicio do menu em R2
+	CALL MostraDisplay; Mostra o menu 
+	CALL LimpaPerifericos; limpa os perifericos
+LoopClear:
+	MOV R3,[OK]; Le o botao de OK
+	CMP R3, 1; Verifica se esta a 1
+	JEQ ClearRegistos;Apaga todos os registos
+	MOV R3, [CANCEL]; le o botao de cancelar em r3
+	CMP R3, 1; Verifica se o botao de cancelar esta ativo
+	JEQ BufferClear; Volta para o menu anterior
+	POP R3
+	POP R2
+	RET
+
+BufferClear:
+	POP R3
+	POP R2
+	RET
 ClearRegistos:
 	MOV R1,1
 	MOV R2, INICIOPRODUTOS
@@ -526,25 +586,29 @@ ClearRegistos:
 ;------------------	
 OBalanca:
 	;carrega o valor dos perifericos
-	MOV R0, PRODUTO
-	MOV R1, PESO
-	MOV R7, OK
+	MOV R0, PRODUTO; Coloca em R0 o apontador para o produto
+	MOV R1, PESO ;Coloca em R1 o apontador para o peso
+	MOV R7, OK; Coloca o em R7 o apontador parabotao de ok
+	MOV R9, [NUMEROPRODUTOS]; Coloca em R9 24, que e o numero de produtos
 	MOVB R8, [R7]	; R8 = BOTAO DE OK
 	MOVB R2, [R0]	; R2 = PRODUTO
 	MOV R3, [R1]	; R3 = PESO
 	MOV R4, [LIMITEPESO]
 	CMP R2, 0; VERIFICAR SE O PRODUTO ESTA A 00
-	JLE OBalanca
+	JLE OBalanca;volta atras
 	CMP R3,0; VERIFICAR SE O PESO ESTA A 00
-	JLE OBalanca
-	CMP R4, R3	;VERIFICAR SE O PESO ULTRAPASSA 3000 QUE E BB0H
-	JLE RotinaERRO
-	CMP R8, 0
+	JLE OBalanca;Volta atras 
+	MOV R4, [MUDANCACPM]; Guarda em R4, a mudanca de Codifo para produto
+	SUB R2,R4; aqui fica guardado no r2 qual e o produto
+	CMP R4, R3	;VERIFICAR SE O PESO ULTRAPASSA 30000 QUE E 7530H
+	CALL RotinaERROBalanca;Vai para erro se o peso for maior que 30000
+	CMP R9, R0; Se o valor recebido em R0 for maior que R9 quer dizer que o produto nao existe
+	CALL RotinaERROBalanca ;Da erro caso isso aconteca
+	CMP R8, 0; verifica se o botao de ok esta a 1
 	JLE OBalanca
 	MOV R5, INICIOPRODUTOS ; onde vamos guardar onde estamos nos menus
 	MOV R6, [ICREMENTOPRODUTOS]	; o valor que vai incrementar nos menus
-	MOV R4, [MUDANCACPM]
-	SUB R2,R4; aqui fica guardado no r2 qual e o produto
+
 CicloEncontraFruta:
 	CMP R2,0
 	JEQ BufferDisplay
@@ -647,8 +711,6 @@ ColocaDecimas:
 	POP R6
 	RET
 
-;Falta uma verificacao do Para ver se o Produto inserido existe
-;Falta Fazer o menu de erro para quando o peso for maior que 30KG
 ;Falta Fazer um Botao de reset que utiliza a funcao ClearRegistos e o botao de cancelar funcionar aqui tambem
 ;Falta na parte das opcoes e perciso let tambem quando o valor e 2 e 3 
 ; Valor 2 Ver os registos Ja feitos
