@@ -14,6 +14,8 @@ MASCARAANTESVIRGULA	EQU			1004H
 MASCARADPSVIRGULA	EQU			1006H
 NUMERO0ASCII		EQU			1008H
 NUMERO9ASCII		EQU			100AH
+NUMERO100			EQU			100CH
+NUMERO10			EQU			100EH
 ;Memoria	
 INICIOPRODUTOS		EQU			0300H
 ICREMENTOPRODUTOS	EQU			0060H
@@ -315,6 +317,8 @@ Constantes:
 	WORD 65280; FF00H
 	WORD 48	;NUMERO 0 EM ASCII
 	WORD 57 ;NUMERO 9 EM ASCII
+	WORD 100; Valor a ser comparado para as decimas
+	WORD 10;
 
 
 Place 2000H
@@ -567,12 +571,11 @@ EditarPrint:
 	MOV R8, [MASCARAANTESVIRGULA];colocaar em R8 00FF
 	MOV R9, [MASCARADPSVIRGULA]; colocar em R9 FF00
 	MOV R10,[NUMERO0ASCII] ; COLOCAR O NUMERO 0 ASCII EM R10 MUDAR ISTO PARA DINAMICO DEPOIS
-	MOV TEMP, [PONTOASCII]
-
+	MOV TEMP, [PONTOASCII];coloca o Ponto em ASCII na variavel temporaria
 	AND R8, R3 ; Vai buscar os digitos antes da virgula
 	AND R9, R3 ;Vai buscar os numeros depois da virgula
-	SHR R9,8
-	ADD R7,R6
+	SHR R9,8	;coloca os bits na parte menos significativa
+	ADD R7,R6	;passa para a casa para escrever o peso
 	MOV [R7],R8;Coloca a parte inteira
 	ADD R7,2;avanca
 	MOV [R7], TEMP; coloca o ponto
@@ -588,18 +591,52 @@ EditarPrint:
 	AND R11, TEMP; Fazer colocar os ultimo bit a 0 Pois e o "ponto"
 	SHR R11,8; Mover 8 bits para a direita para ficar os bits na casa unidade
 	CMP R8, R10;verificar se o valor recebito em R8 era 0
-	JLE SomaUnidades ; salta para o SomaUnidades se o falor recebido for 0
+	JLE R8NaoASCII ; salta para o SomaUnidades se o falor recebido for 0
 	SUB R8, R10 ; passa o valor R8 de ASCII para unidade
-	ADD R8, 5; Adicionar 5 de cada vez pois nao da para adicionar 10 de uma vez
-	ADD R8, 5; adicionar o outro 5
-SomaUnidades:; ATE aqui esta tudo a funcionar
+	MOV TEMP, [NUMERO10]; Coloca o numero 10 em 
+	MUL R8, TEMP; Multiplica R8 por 10
+	JMP SomaUnidades; Salta para o SomaUnidades
+R8NaoASCII:
+	MOV R8,0; Caso o R8 nao for um valor ASCII
+SomaUnidades:
 	SUB R11, R10; Transforma o R11 de ASCII para unidades
 	ADD R8,R11; Colocar o Valor da soma no R8
-	;agora tenho o Preco por kilo em unidades, quero agora multiplicar pelo peso
-	;e depois disso ir buscar o valor das decimas para multiplicar Pelo preco 
-	;e se o resultado obtido for maior que 99, entao subtrarir 100 
-	;e adicionar uma unidade no valor real
-
+	MUL R8,R3 ; Multiplica o peso pelo preco
+	ADD R7, 2; Coloca o apontador R7 a apontar para as casas decimais
+	MOV R11, [R7];Coloca Ambos os digitos em R11
+	MOV R9, [MASCARADPSVIRGULA]; Coloca em R9, FF00
+	AND R9, R11; Coloca em R9 o valor primeiro digito decimal
+	SHR R9, 8; Coloca os bits na parte menos significativa
+	SUB R9, R10; Tansforma de ASCII para unidades
+	MOV TEMP, [MASCARAANTESVIRGULA]; Coloca em R10 00FF
+	AND R11, TEMP; coloca o R11 SO com o segundo digito
+	SUB R11, R10; Transforma o R11 de ASCII para unidades
+	MOV TEMP, [NUMERO10]; Coloca o numero 10 em 
+	MUL R9, Temp; Multiplica R9 por 10
+	ADD R9,R11; Coloca em R9, o valor total das decimas
+	MUL R9, R3; Multiplica a parte decimal pelo peso
+	MOV TEMP, [NUMERO100]; Coloca em TEMP o numero 100
+	MOV R11, 0;Coloca o R11 a 0 para ser o valor adicionado caso as decimas sejam superiores a 100
+LoopDecimas:
+	CMP R9,TEMP ;Verifica se o R9 e maior que 100
+	JLE ColocaDecimas;salta para o proximo passo se for
+	SUB R9, TEMP; Subtrai 100 
+	ADD R11, 1; Adiciona 1 para as unidades
+	JMP LoopDecimas; Volta ao inicio do loop
+ColocaDecimas:
+	ADD R8, R11; Adiciona o valor obtido antes para R8
+	MOV R7, R5; Volta ao inicio do produto
+	MOV R6, [DISTANCIATOTAL]; Mete a distancia para o total em R6
+	ADD R7, R6; coloca O apontador (R7) para o total
+	MOV [R7], R8; Coloca no total o valor de R8
+	MOV TEMP, [PONTOASCII]; Coloca o "ponto" ASCII em TEMP
+	ADD R7,2;Passa uma casa a frente
+	MOV [R7], TEMP; Coloca o "ponto" ASCII
+	ADD R7, 2; Passa uma casa a frente
+	MOV [R7], R9; Coloca o valor decimal 
+	;Aqui os valores ja estao todos como deviao estar
+	;Agora falta so transormar o R8 e o R9 em valores ASCII
+	;E coloca los na memoria
 
 	POP TEMP
 	POP R11
@@ -610,14 +647,10 @@ SomaUnidades:; ATE aqui esta tudo a funcionar
 	POP R6
 	RET
 
-; COMO FAZER AS MULTIPLICACOES, IR BUSCAR O NUMERO ANTESW
-;BASICAMENTE IR PARA A POSICAO ANTESERIROR E GUARDAR ESSE
-;DEPOIS IR BUSCAR O PROXIMO E USAR A MASCARA E UM BITSHIFT
-;PARA CONSEGUIR O VALOR PRETENDIDO OU SO USAR UM MOVB
-;DEPOIS IR BUSCAR OS VALORES DECIMAIS
-;TIRAR 48 DO VALOR ORIGINAL POIS OS NUMEROS SAO EM EXADECIMAL E ASCII
-; PARA DEPOIS FAZER A MULTIPLICACAO COM AS UNIDADES
-; PARA DEPOIS FAZER COM AS DECIMAS E SE A MULTIPLICACAO COM AS DECIMAS DER 
-;3 DIGITOS EU TIRO O TERCEIRO E ADICIONO O AO VALOR DECIMAL
-; DEOPOIS BASTA COLOCAR OS VALORES OUTRAVEZ EM heXADECIMAL DE ASCII 
-; E COLOCALOS NA TABELA
+;Falta uma verificacao do Para ver se o Produto inserido existe
+;Falta Fazer o menu de erro para quando o peso for maior que 30KG
+;Falta Fazer um Botao de reset que utiliza a funcao ClearRegistos e o botao de cancelar funcionar aqui tambem
+;Falta na parte das opcoes e perciso let tambem quando o valor e 2 e 3 
+; Valor 2 Ver os registos Ja feitos
+; Valor 3 Usar o ClearRegistos
+;Falta fazer o change quando ja esta no menu da balanca que mostra ao utilizador todos os produtos
