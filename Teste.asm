@@ -17,6 +17,7 @@ NUMERO9ASCII		EQU			100AH
 NUMERO100			EQU			100CH
 NUMERO10			EQU			100EH
 NUMEROPRODUTOS		EQU			1010H
+
 ;Memoria	
 INICIOPRODUTOS		EQU			0300H
 INCERMENTOPRODUTOS	EQU			0060H
@@ -82,7 +83,7 @@ BProduto:
 ;Tabela dos Precos e Nomes 
 Place 0300H
 Uvas:	
-	String "      Uvas      "
+	String "100   Uvas      "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
@@ -91,7 +92,7 @@ Uvas:
 	String "             EUR"
 Place 0370H
 Melancia:	
-	String "    Melancia    "
+	String "101 Melancia    "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
@@ -101,7 +102,7 @@ Melancia:
 
 Place 03E0H
 Ananas:	
-	String "     Ananas     "
+	String "102  Ananas     "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
@@ -110,7 +111,7 @@ Ananas:
 	String "             EUR"
 Place 0450H
 Kiwi:	
-	String "      Kiwi      "
+	String "103   Kiwi      "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
@@ -119,7 +120,7 @@ Kiwi:
 	String "             EUR"
 Place 04C0H
 Pessego:	
-	String "     Pessego    "
+	String "104  Pessego    "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
@@ -127,161 +128,201 @@ Pessego:
 	String "Total:          "
 	String "             EUR"
 Place 0530H
+Banana:	
+	String "105  Banana     "
+	String "Peso :          "
+	String "              KG"
+	String "Preco:          "
+	String "     2.58EUR/KG"
+	String "Total:          "
+	String "             EUR"	
+
+Place 05A0H
+Morango:	
+	String "106  Morango    "
+	String "Peso :          "
+	String "              KG"
+	String "Preco:          "
+	String "     4.46EUR/KG"
+	String "Total:          "
+	String "             EUR"
+
+Place 0610H
 Framboesa:	
-	String "    Framboesa   "
+	String "107 Framboesa   "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "     17.81EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 05A0H
+
+Place 0680H
 Laranja:	
-	String "     Laranja    "
+	String "108  Laranja    "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "      1.60EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 0610H
+
+Place 06F0H
 Tangerina:	
-	String "    Tangerina   "
+	String "109 Tangerina   "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "      2.22EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 0680H
+
+Place 0760H
 Cenoura:	
-	String "     Cenoura    "
+	String "110  Cenoura    "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "      1.04EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 06F0H
+
+Place 07D0H
 Batata:	
-	String "     Batata     "
+	String "111  Batata     "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "      1.14EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 0760H
+
+Place 0840H
 Nabo:	
-	String "      Nabo      "
+	String "112   Nabo      "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "      2.28EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 07D0H
+
+Place 08B0H
 Beterraba:	
-	String "    Beterraba   "
+	String "113 Beterraba   "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "      5.23EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 0840H
+
+Place 0920H
 Alho:	
-	String "      Alho      "
+	String "114   Alho      "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "      6.19EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 08B0H
+
+Place 0990H
 Cebola:	
-	String "     Cebola     "
+	String "115  Cebola     "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "     1.43EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 0920H
+
+Place 0A00H
 Ervilha:	
-	String "     Ervilha    "
+	String "116  Ervilha    "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "      1.42EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 0990H
+
+Place 0A70H
 Lentilhas:	
-	String "    Lentilhas   "
+	String "117 Lentilhas   "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "      2.19EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 0A00H
+
+
+Place 0AE0H
 Trigo:	
-	String "      Trigo     "
+	String "118   Trigo     "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "      0.95EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 0A70H
+
+Place 0B50H
 Milho:	
-	String "      Milho     "
+	String "119   Milho     "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "      3.62EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 0AE0H
+
+Place 0BC0H
 Favas:	
-	String "      Favas     "
+	String "120   Favas     "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "      4.07EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 0B50H
+
+Place 0C30H
 Castanhas:	
-	String "    Castanhas   "
+	String "121 Castanhas   "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "      8.92EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 0BC0H
+
+Place 0CA0H
 Noz:	
-	String "       Noz      "
+	String "122    Noz      "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "     18.39EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 0C30H
+
+
+
+Place 0D10H
 Amendoim:	
-	String "    Amendoim    "
+	String "123 Amendoim    "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
 	String "      8.03EUR/KG"
 	String "Total:          "
 	String "             EUR"
-Place 0CA0H
+
+Place 0D80H
 Cafe:	
-	String "      Cafe      "
+	String "124   Cafe      "
 	String "Peso :          "
 	String "              KG"
 	String "Preco:          "
@@ -289,25 +330,6 @@ Cafe:
 	String "Total:          "
 	String "             EUR"
 
-
-Place 0D10H
-Banana:	
-	String "     Banana     "
-	String "Peso :          "
-	String "              KG"
-	String "Preco:          "
-	String "     2.58EUR/KG"
-	String "Total:          "
-	String "             EUR"
-Place 0D80H
-Morango:	
-	String "     Morango    "
-	String "Peso :          "
-	String "              KG"
-	String "Preco:          "
-	String "     4.46EUR/KG"
-	String "Total:          "
-	String "             EUR"
 
 	
 Place 1000H
@@ -407,7 +429,7 @@ Le_Opcao:
 	CMP R1, MBalanca;OPCAO 1
 	JEQ BufferBalanca
 	CMP R1, MRegistos;OPCAO 2
-	JEQ BufferMostraDisplayProdutos
+	;JEQ BufferMostraDisplayProdutos
 	CMP R1, OLimpa; Opcao 3
 	CALL ConfirmacaoClear;
 	CMP R1,1
@@ -485,9 +507,7 @@ Ciclo:
 ;----------------------
 ;MostraDisplay Produtos
 ;----------------------
-BufferMostraDisplayProdutos:
-	CALL MostraDisplayProdutos
-	JMP ligado
+
 MostraDisplayProdutos:
 	PUSH R0
 	PUSH R1
@@ -500,7 +520,11 @@ MostraDisplayProdutos:
 	PUSH R8
 	PUSH R9
 	PUSH R10
+	PUSH R11
 	PUSH TEMP
+	MOV R0, OK;Coloca temporariamente o endereco do OK em R0
+	MOV R1,0; Coloca temporariamente o 0 em R1
+	MOV [R0], R1 ;Volta a colocar o Ok a 0
  	MOV R0, Display; Coloca em R0 o  apontador para o inicio do display
 	MOV R1, Display_end; coloca em R1 o apontador para o fim do disply
 	MOV R2, INICIOPRODUTOS; Coloca o apontador de R2 para o inicio dos produtos
@@ -508,13 +532,23 @@ MostraDisplayProdutos:
 	MOV R7, [MUDANCACPM]; Coloca em R7 100  por causa do codigo do produto
 	MOV R8, [INCERMENTOPRODUTOS]; Coloca em R8 o valor para passar ao proximo produto
 	MOV R9, [NUMEROPRODUTOS]; Coloca o numero de produtos em R9
-	MOV R10, 8; Coloca 8 em R10 para verificar se ja acabou a linha
-	CALL LimpaPerifericos; Para apagar os valores do OK
-LoopDisplay:
+	MOV R10, 9; Coloca 8 em R10 para verificar se ja acabou a linha
+	MOV TEMP, 0; Coloca a variavel temporaria a 0 para ser o contador
+	JMP LoopLinhaDisplay; Carrega a primeira parte
+BufferLoopDisplay:
+	MOV R11,0;COloca o R11 a 0
+	MOV [OK],R11; Coloca O botao de OK a 0
+	SUB R2, 4; Volta as primeiras 4 casas
+	SUB R2, 4; Volta as primeiras 4 casas
+	SUB R2, 4; Volta as primeiras 4 casas
+	SUB R2, 4; Volta ao inicio do priduto
+	ADD R2, R8; Passa ao proximo produto
+LoopDisplay: 
+ 	MOV R0, Display; Coloca em R0 o  apontador para o inicio do display
 	MOV TEMP,CANCEL ;COloca a variavel temporaria a apontar para o cancel
 	MOVB R5, [TEMP]; Coloca em R5 o registo que esta em CANCEL
 	MOV TEMP, OK; COloca o apontador par ok em TEMP
-	MOVB R4, [Temp]; COloca em R4 o valor do enderenco Temp
+	MOVB R4, [TEMP]; COloca em R4 o valor do enderenco Temp
 	MOV TEMP, 0; Coloca a variavel temporaria a 0
 	CMP R5, 1; Verifica se o utilizador quer cancelar
 	JEQ AcabaDisplay; Acaba o display e volta a aparecer o menu
@@ -523,7 +557,8 @@ LoopDisplay:
 LoopLinhaDisplay:
 	ADD R6, 1; Incrementa 1 nos produtos
 	CMP R9, R6; Verifica se ja acabou os produtos
-	JLE AcabaDisplay; Se ja estiver ultrapassado o numero de produtos acaba
+	JLE BufferAcabaDisplay; Se ja estiver ultrapassado o numero de produtos acaba
+BufferLinhaDisplay:
 	ADD TEMP, 1; Adiciona 1 a variavel temporaria
 	CMP TEMP, R10; verifica se a primeira linha ja foi escrita
 	JEQ BufferDisplayLinha; Vai incrementar para o poximo produto e depois voltar atras;
@@ -532,14 +567,27 @@ LoopLinhaDisplay:
 	ADD R2, 2; avanca na casa do prodito
 	ADD R0,2; avanca no display
 	CMP R0, R1; Se o display ja acabou entao volta atras
-	JLE LoopDisplay; VOlta atras para o depois voltar a dar print
+	JLE BufferLinhaDisplay; Repete o processo para dar print em tudo
+	JMP BufferLoopDisplay; Volta tras para a opcao de prosseguir
 BufferDisplayLinha:	
-	SUB R2, R10; Volta atras 8 casas
-	SUB R2, R10; Volta ao inicio do produto 
+	SUB R2, 4; Volta as primeiras 4 casas
+	SUB R2, 4; Volta as primeiras 4 casas
+	SUB R2, 4; Volta as primeiras 4 casas
+	SUB R2, 4; Volta ao inicio do priduto
 	ADD R2, R8; Passa ao proximo produto
+	MOV TEMP,0;Voolta a colocar o contador a 0
 	JMP LoopLinhaDisplay; passa a proxima linha do display
+BufferAcabaDisplay:
+	MOV R11,0;Coloca o R11 a 0
+	MOV [OK],R11; Volta a colocar o Ok a 0 para esperar o input do utilizador
+LoopEsperaPorInput:
+	MOV TEMP, OK; Le o ok 
+	MOVB R0,[TEMP];Coloca o valor do OK em R0
+	CMP R0, 0;Se o R0 estiver a 1 acaba o display
+	JEQ LoopEsperaPorInput; Caso contrario volta atras
 AcabaDisplay:
 	POP TEMP
+	POP R11
     POP R10
 	POP R9
 	POP R8
@@ -685,8 +733,16 @@ BufferClear:
 ;------------------
 ;  	 Balanca
 ;------------------	
+BufferMostraDisplayProdutos:
+	CALL MostraDisplayProdutos; Chama a funcao para mostrar os produtos
+	MOV R2, MenuBalanca;Guarda a posicao def moemoria do menu inicial
+	CAll MostraDisplay;Mostra o menu de escolha do peso e do Produto
 OBalanca:
 	;carrega o valor dos perifericos
+	MOV R0,CHANGE; CARREGA o botao change em R0
+	MOVB R1, [R0]; carrega o que esta gravado no endereco
+	CMP R1, 1; Verifica se esta a 1
+	JEQ BufferMostraDisplayProdutos;
 	MOV R0, PRODUTO; Coloca em R0 o apontador para o produto
 	MOV R1, PESO ;Coloca em R1 o apontador para o peso
 	MOV R7, OK; Coloca o em R7 o apontador parabotao de ok
@@ -812,6 +868,5 @@ ColocaDecimas:
 	POP R6
 	RET
 
-;Falta na parte das opcoes e perciso let tambem quando o valor e 2 e 3 
+;Falta na parte das opcoes e perciso let tambem quando o valor e 2 
 ; Valor 2 Ver os registos Ja feitos
-;Falta fazer o change quando ja esta no menu da balanca que mostra ao utilizador todos os produtos
