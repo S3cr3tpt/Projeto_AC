@@ -669,7 +669,13 @@ CicloLimpa:
 	POP R2
 	POP R1
 	POP R0		
-	RET		
+	RET	
+
+;----------------------------------------------------------------
+;Buffers para voltar ao inicio
+;----------------------------------------------------------------
+BufferCancel:JMP ligado	
+BufferDesliga: JMP Principio
 ;-----------------------------------------------------
 ;Isto e simplemente para dar clear nos registos pois 
 ;estamos a assumir que so pode ter uma vez cada fruta
@@ -739,6 +745,14 @@ BufferMostraDisplayProdutos:
 	CAll MostraDisplay;Mostra o menu de escolha do peso e do Produto
 OBalanca:
 	;carrega o valor dos perifericos
+	MOV R0, CANCEL; Carrega o botao de Cancel em R0
+	MOVB R1, [R0]; Carrega o valor do botao cancel
+	CMP R1,1 ;verifica se esta pressionao
+	JEQ BufferCancel;
+	MOV R0, ON_OFF; Carrega o botao de Onoff em R0
+	MOVB R1, [R0]; Carrega o valor do botao cancel
+	CMP R1,1 ;verifica se esta pressionao
+	JEQ BufferDesliga;
 	MOV R0,CHANGE; CARREGA o botao change em R0
 	MOVB R1, [R0]; carrega o que esta gravado no endereco
 	CMP R1, 1; Verifica se esta a 1
