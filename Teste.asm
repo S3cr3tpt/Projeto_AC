@@ -437,16 +437,14 @@ Le_Opcao:
 	CALL RotinaERRO
 	JMP ligado
 
+BufferRegistos:
+	CALL LimpaPerifericos
+	CALL MostraRegistos
+	CMP R1,1 ;Compara com 1, caso seja 1 desliga
+	JEQ Principio; Volta ao desligado
+	JMP Le_Opcao
 
 BufferBalanca:
-	MOV R1, OK
-	MOVB R3, [R1] ; R3 = VALOR QUE ESTA NO OK
-	CMP R3, 0
-	JLE	BufferBalanca
-	MOV R1, CANCEL
-	MOVB R3, [R1] ; R3 = VALOR QUE ESTA NO CANCEL	
-	CMP R3, 1
-	JEQ	ligado
 	MOV R2, MenuBalanca
 	CALL MostraDisplay
 	CALL LimpaPerifericos
@@ -882,5 +880,42 @@ ColocaDecimas:
 	POP R6
 	RET
 
-;Falta na parte das opcoes e perciso let tambem quando o valor e 2 
-; Valor 2 Ver os registos Ja feitos
+BufferDesligaRegistos:
+	
+	POP R1
+	POP R0
+	MOV R1,1;
+	RET
+BufferVoltaRegistos:
+	POP R9
+	POP R8
+	POP R7
+	POP R6
+	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+	MOV R1,0
+	RET
+
+MostraRegistos:
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	PUSH R5
+	PUSH R6
+	PUSH R7
+	PUSH R8
+	PUSH R9
+	MOV R0, CANCEL; Carrega o botao de Cancel em R0
+	MOVB R1, [R0]; Carrega o valor do botao cancel
+	CMP R1,1 ;verifica se esta pressionao
+	JEQ BufferVoltaRegistos;
+	MOV R0, ON_OFF; Carrega o botao de Onoff em R0
+	MOVB R1, [R0]; Carrega o valor do botao cancel
+	CMP R1,1 ;verifica se esta pressionao
+	JEQ BufferDesligaRegistos;
