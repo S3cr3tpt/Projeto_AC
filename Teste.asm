@@ -737,6 +737,9 @@ BufferClear:
 ;------------------
 ;  	 Balanca
 ;------------------	
+BufferErro:
+	CALL RotinaERROBalanca
+	JMP OBalanca
 BufferMostraDisplayProdutos:
 	CALL MostraDisplayProdutos; Chama a funcao para mostrar os produtos
 	MOV R2, MenuBalanca;Guarda a posicao def moemoria do menu inicial
@@ -763,18 +766,19 @@ OBalanca:
 	MOVB R2, [R0]	; R2 = PRODUTO
 	MOV R3, [R1]	; R3 = PESO
 	MOV R4, [LIMITEPESO]
+	CMP R8, 0; verifica se o botao de ok esta a 1
+	JLE OBalanca
 	CMP R2, 0; VERIFICAR SE O PRODUTO ESTA A 00
 	JLE OBalanca;volta atras
 	CMP R3,0; VERIFICAR SE O PESO ESTA A 00
 	JLE OBalanca;Volta atras 
 	MOV R4, [MUDANCACPM]; Guarda em R4, a mudanca de Codifo para produto
 	SUB R2,R4; aqui fica guardado no r2 qual e o produto
-	CMP R4, R3	;VERIFICAR SE O PESO ULTRAPASSA 30000 QUE E 7530H
-	CALL RotinaERROBalanca;Vai para erro se o peso for maior que 30000
-	CMP R9, R0; Se o valor recebido em R0 for maior que R9 quer dizer que o produto nao existe
-	CALL RotinaERROBalanca ;Da erro caso isso aconteca
-	CMP R8, 0; verifica se o botao de ok esta a 1
-	JLE OBalanca
+	MOV TEMP, [LIMITEPESO]; guarda o limite de peso
+	CMP TEMP, R3	;VERIFICAR SE O PESO ULTRAPASSA 30000 QUE E 7530H
+	JLE BufferErro;Vai para erro se o peso for maior que 30000
+	CMP R9, R2; Se o valor recebido em R0 for maior que R9 quer dizer que o produto nao existe
+	JLE BufferErro ;Da erro caso isso aconteca
 	MOV R5, INICIOPRODUTOS ; onde vamos guardar onde estamos nos menus
 	MOV R6, [INCERMENTOPRODUTOS]	; o valor que vai incrementar nos menus
 
@@ -851,26 +855,76 @@ SomaUnidades:
 	MOV TEMP, [NUMERO100]; Coloca em TEMP o numero 100
 	MOV R11, 0;Coloca o R11 a 0 para ser o valor adicionado caso as decimas sejam superiores a 100
 LoopDecimas:
+	SUB TEMP,1 ; Para quando for 99
 	CMP R9,TEMP ;Verifica se o R9 e maior que 100
-	JLE ColocaDecimas;salta para o proximo passo se for
+	JLE HexaToASCIIToMemory;salta para o proximo passo se for
+	ADD TEMP,1;Volta a colocar antes de subtrair
 	SUB R9, TEMP; Subtrai 100 
 	ADD R11, 1; Adiciona 1 para as unidades
 	JMP LoopDecimas; Volta ao inicio do loop
-ColocaDecimas:
+HexaToASCIIToMemory:
 	ADD R8, R11; Adiciona o valor obtido antes para R8
-	MOV R7, R5; Volta ao inicio do produto
+	MOV R3, 0; Carrega a casa das centenas
+	MOV R4,0; Carrega a casa das desenas
+	MOV R5,0;Carrega a casa das unidades
+	MOV R10,0; Carrega a casa das decimas
+	MOV R11,0;Carrega a Casa dasd cente
+LoopCentenas:
+	MOV TEMP, [NUMERO100];Coloca 100 em TEMP
+    SUB TEMP,1; Colocao  temp a 99 pois se deixarmos a 100 vai dar erros
+	CMP R8, TEMP; Compara o R3 e o TEMP(Que e 100)
+	JLE LoopDesenas;Se for menor que 99 entao vai para as desena
+	ADD TEMP,1 ;Caso nao for volta a por a 100
+	SUB R8, TEMP; tira esses 100
+	ADD R3,1; Coloca 1 na casa das Centenas
+	JMP LoopCentenas;volta atras
+LoopDesenas:
+	MOV TEMP, [NUMERO10]; Coloca o Temp com o valor 10
+    SUB TEMP,1; Colocao  temp a 9 pois se deixarmos a 10 vai dar erros
+	CMP R8, TEMP; Compara o R3 e o TEMP(Que e 10)
+	JLE BufferUnidades;Se for menor que 9 entao vai para as unidades
+	ADD TEMP,1 ;Caso nao for volta a por a 10
+	SUB R8, TEMP; tira esses 10
+	ADD R4,1; Coloca 1 na casa das Desenas
+	JMP LoopDesenas; volta atras
+BufferUnidades:
+	MOV R5,R8; Coloca o restante das unidades em R5
+LoopDecimas2:
+	MOV TEMP, [NUMERO10]; Coloca o Temp com o valor 10
+    SUB TEMP,1; Colocao  temp a 9 pois se deixarmos a 10 vai dar erros
+	CMP R9,TEMP; Compara o R3 e o TEMP(Que e 10)
+	JLE BufferCentenas;Se for menor que 9 entao vai para as decimas
+	ADD TEMP,1 ;Caso nao for volta a por a 10
+	SUB R9, TEMP; tira esses 10
+	ADD R10,1; Coloca 1 na casa das decimas
+	JMP LoopDecimas2;volta atras
+BufferCentenas:
+	MOV R11, R9;Carrega o restante em R11(centesimas)
+ColocaASCII:
+	MOV R7, R2; VVolta ao produto escolhido
 	MOV R6, [DISTANCIATOTAL]; Mete a distancia para o total em R6
 	ADD R7, R6; coloca O apontador (R7) para o total
-	MOV [R7], R8; Coloca no total o valor de R8
-	MOV TEMP, [PONTOASCII]; Coloca o "ponto" ASCII em TEMP
-	ADD R7,2;Passa uma casa a frente
-	MOV [R7], TEMP; Coloca o "ponto" ASCII
-	ADD R7, 2; Passa uma casa a frente
-	MOV [R7], R9; Coloca o valor decimal 
-	;Aqui os valores ja estao todos como deviao estar
-	;Agora falta so transormar o R8 e o R9 em valores ASCII
-	;E coloca los na memoria
-
+	MOV TEMP, [NUMERO0ASCII]; Coloca 30H em TEMP para transformar os numeros em ASCII
+	ADD R3,TEMP; Coloca o numero em ASCII
+	ADD R4,TEMP; Coloca o numero em ASCII
+	ADD R5,TEMP; Coloca o numero em ASCII
+	ADD R10,TEMP; Coloca o numero em ASCII
+	ADD R11,TEMP; Coloca o numero em ASCII
+	SHL R3,8; Coloca o valor 8 casas para a esquerda(Casa das centenas)
+	ADD R3,R4; Coloca o valor de R4 na segunda parte(casa das desenas)
+	MOV [R7],R3; Coloca isso na memoria
+	ADD R7, 2; Avanca 2 casas
+	SHL R5,8 ; Colocao valor 8 casas para a esquerda,(unidades)
+	MOV TEMP, [PONTOASCII]; Coloca o pornto em ascii no TEMP
+	ADD R5,TEMP; Coloca o POnto depois das unidades
+	MOV [R7], R5; Coloca isso na memoria
+	ADD R7,2 ;Avanca 2 casas na memoria
+	CMP R10,0; Verifica se e 0
+	JEQ BufferColoca0ASCII
+ContinuaASCII:
+	SHL R10,8 ;Coloca o valor 8 casas a esquerda ( decimas)
+	ADD R10,R11;Coloca o valor das centsimas
+	MOV [R7],R6; Coloca isso na memoria
 	POP TEMP
 	POP R11
 	POP R10
@@ -879,7 +933,9 @@ ColocaDecimas:
 	POP R7
 	POP R6
 	RET
-
+BufferColoca0ASCII:
+	MOV R10,[NUMERO0ASCII]
+	JMP ContinuaASCII
 BufferDesligaRegistos:
 	
 	POP R1
