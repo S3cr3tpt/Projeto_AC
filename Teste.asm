@@ -32,7 +32,7 @@ DISTANCIALINHATOTAL	EQU			006AH
 
 ; Display
 Display				EQU			210H
-Display_end 		EQU			28FH
+Display_end 		EQU			27FH
 CaracterVazio 		EQU 		20H			; Caracter para limpar o ecra
 
 MBalanca			EQU 		1			; Opcao de Balanca
@@ -431,7 +431,7 @@ Le_Opcao:
 	CMP R1, MBalanca;OPCAO 1
 	JEQ BufferBalanca
 	CMP R1, MRegistos;OPCAO 2
-	JEQ BufferMostraDisplayProdutos
+	JEQ BufferRegistos
 	CMP R1, OLimpa; Opcao 3
 	CALL ConfirmacaoClear;
 	CMP R1,1
@@ -442,6 +442,9 @@ Le_Opcao:
 BufferRegistos:
 	CALL LimpaPerifericos
 	CALL MostraRegistos
+	MOV R2, MenuInicio
+	CALL MostraDisplay
+	CALL LimpaPerifericos
 	CMP R1,1 ;Compara com 1, caso seja 1 desliga
 	JEQ Principio; Volta ao desligado
 	JMP Le_Opcao
@@ -452,10 +455,16 @@ BufferBalanca:
 	CALL LimpaPerifericos
 	JMP OBalanca
 
+BufferMostraDisplayProdutos:
+	CALL MostraDisplayProdutos; Chama a funcao para mostrar os produtos
+	MOV R2, MenuBalanca;Guarda a posicao def moemoria do menu inicial
+	CAll MostraDisplay;Mostra o menu de escolha do peso e do Produto
+	CALL LimpaPerifericos; limpa os perifericos
+	JMP BufferVoltaBalanca; Volta para a balanca
+
 ;------------------
 ;   Rotina Erro
-;------------------			
-		
+;------------------				
 RotinaERRO:
 	PUSH R0
 	PUSH R1
@@ -604,7 +613,8 @@ AcabaDisplay:
 ;--------------------
 ; Limpa Perifericos
 ;--------------------				
-			
+
+		
 LimpaPerifericos:
 	PUSH R0
 	PUSH R1
@@ -676,6 +686,8 @@ CicloLimpa:
 ;----------------------------------------------------------------
 BufferCancel:JMP ligado	
 BufferDesliga: JMP Principio
+BufferMostraDisplay: JMP BufferMostraDisplayProdutos
+BufferVoltaBalanca: JMP OBalanca
 ;-----------------------------------------------------
 ;Isto e simplemente para dar clear nos registos pois 
 ;estamos a assumir que so pode ter uma vez cada fruta
@@ -742,10 +754,6 @@ BufferClear:
 BufferErro:
 	CALL RotinaERROBalanca
 	JMP OBalanca
-BufferMostraDisplayProdutos:
-	CALL MostraDisplayProdutos; Chama a funcao para mostrar os produtos
-	MOV R2, MenuBalanca;Guarda a posicao def moemoria do menu inicial
-	CAll MostraDisplay;Mostra o menu de escolha do peso e do Produto
 OBalanca:
 	;carrega o valor dos perifericos
 	MOV R0, CANCEL; Carrega o botao de Cancel em R0
@@ -759,7 +767,7 @@ OBalanca:
 	MOV R0,CHANGE; CARREGA o botao change em R0
 	MOVB R1, [R0]; carrega o que esta gravado no endereco
 	CMP R1, 1; Verifica se esta a 1
-	JEQ BufferMostraDisplayProdutos;
+	JEQ BufferMostraDisplay;
 	MOV R0, PRODUTO; Coloca em R0 o apontador para o produto
 	MOV R1, PESO ;Coloca em R1 o apontador para o peso
 	MOV R7, OK; Coloca o em R7 o apontador parabotao de ok
@@ -939,6 +947,7 @@ BufferColoca0ASCII:
 	MOV R10,[NUMERO0ASCII]
 	JMP ContinuaASCII
 BufferDesligaRegistos:
+	POP R10
 	POP R9
 	POP R8
 	POP R7
@@ -952,6 +961,7 @@ BufferDesligaRegistos:
 	MOV R1,1;e para desligar
 	RET
 BufferVoltaRegistos:
+	POP R10
 	POP R9
 	POP R8
 	POP R7
@@ -985,87 +995,68 @@ MostraRegistos:
 	PUSH R7
 	PUSH R8
 	PUSH R9
-loopConfirmacao:
-	MOV R0, CANCEL; Carrega o botao de Cancel em R0
-	MOVB R1, [R0]; Carrega o valor do botao cancel
-	CMP R1,1 ;verifica se esta pressionao
-	JEQ BufferVoltaRegistos;
-	MOV R0, ON_OFF; Carrega o botao de Onoff em R0
-	MOVB R1, [R0]; Carrega o valor do botao cancel
-	CMP R1,1 ;verifica se esta pressionao
-	JEQ BufferDesligaRegistos;
-	MOV R0, OK; coloca botao de ok no R0
-	MOVB R1,[R0]; coloca o valor do botao ok no R1
-	CMP R1,0;verifica se esta a 0
-	JLE loopConfirmacao; se estiver a 0 volta atras
-
+	PUSH R10
 	MOV R0, INICIOPRODUTOS; Coloca o inicio do produto para mostrar
 	MOV R1, [INCERMENTOPRODUTOS]; Coloca no R1 a distancia entre produtos
-	MOV R2, [DISTANCIALINHATOTAL]; Coloca no R2 onde esta gravado na balanca
+	MOV R2, 0 ; Coloca no R2 onde o contador de espacos de memoria
 	MOV R3, [NUMEROPRODUTOS]; quantidade de produtos mais 1
 	MOV R4, 0; contador dos produtos
 	MOV R5, Display;coloca o inicio do display no R5
 	MOV R6, Display_end; coloca o fim do display no R5
 	MOV R7,9; verifica se a linha ja acabou
 	JMP loopMostraProdutos; vai para o loop
-BufferLoopMostra:
-	SUB R0,R2; volta ao inicio do porudto
-	ADD R0, R1; vai para o proximo produto
+
+BufferMostraProdutos:
+	MOV TEMP, [DISTANCIATOTAL]; Coloca a distancia ao total em TEMP
+	SUB R0,TEMP; Vai para o titolo do produto
+	ADD R0,R1; vai para o proximo produto
 loopMostraProdutos:
 	CMP R3,R4; verifica se ja acabou os produtos;
 	JLE BufferAcabaMostraProdutos;
 	ADD R4,1; Adiciona 1 ao contador
-	ADD R0, R2; Vai para onde esta o total
+	MOV TEMP, [DISTANCIATOTAL]; Coloca a distancia ao total em TEMP
+	ADD R0, TEMP; Vai para onde esta o total
 	MOV TEMP, [R0]; Mete o valor de R0 em 0
 	CMP TEMP, 0; Verifica se nao tem nada, se nao tiver entao nao ha registos
-	JLE BufferLoopMostra;
-	SUB R0,R2; Vai para o titolo do produto
-	MOV TEMP,0; Coloca o contador a 0
+	JLE BufferMostraProdutos; volta a fazer o loop
+	MOV TEMP, [DISTANCIATOTAL]; Coloca a distancia ao total em TEMP
+	SUB R0,TEMP; Vai para o titolo do produto
 BufferLoopDisplayMostra:
-	MOV [R5], [R0]; coloca o que esta nos produtos
+	MOV R10, [R0];coloca em R10 o que esta nos produtos
+	MOV [R5], R10; Grava isso na memoria
 	ADD R5,2; vai para a poroxima posicao de memoria
 	ADD R0,2; vai para a poroxima posicao de memoria
-	ADD TEMP,1; adiciona 1 a temp
-	CMP R7,TEMP; Verifica se a linha ja acabou
-	JLE TotalMostra 
-TotalMostra:
-	MOV TEMP,0; volta a colocar o TEMP a 0
-	MOV [OK],TEMP; Coloca O botao de OK a 0
-	SUB R0, 4; Volta as primeiras 4 casas
-	SUB R0, 4; Volta as primeiras 4 casas
-	SUB R0, 4; Volta as primeiras 4 casas
-	SUB R0, 4; Volta ao inicio do priduto
-	ADD R0,R2; Vai para o total
-loopMostraTotal:
-	MOV [R5], [R0]; coloca o que esta nos produtos
-	ADD R5,2; vai para a poroxima posicao de memoria
-	ADD R0,2; vai para a poroxima posicao de memoria
-	ADD TEMP,1; adiciona 1 a temp
-	CMP R7,TEMP; Verifica se a linha ja acabou
-	JLE BufferMostraTotal; Vai para o buffer do total 
-	JMP loopMostraTotal; Volta atras
-BufferMostraTotal:
-	SUB R0, 4; Volta as primeiras 4 casas
-	SUB R0, 4; Volta as primeiras 4 casas
-	SUB R0, 4; Volta as primeiras 4 casas
-	SUB R0, 4; Volta ao inicio do priduto
-	CMP R5,R6; Verifica se o display ja acabou
-	JLE BufferLoopMostraProdutos; Se ainda nao acabou volta atras
-	JMP EsperaOK; salta para o espera ok
-BufferLoopMostraProdutos:
+	ADD R2,2; incremetna o contador
+	CMP R5,R6; verifica se o ecran ja acabou
+	JLE BufferLoopDisplayMostra; se nao vola atras
+	CMP R3,R4;verifica se ja acabou o produto
+	JLE EsperaOK; espera o ok para acabar
+Continua:	
 	MOV R8, OK; coloca OK em R8
 	MOVB R9, [R8]; Coloca o valor do botao em R9
 	CMP R9,1; verifica se esta a 1;
-	JEQ BufferLoopMostra; vai para o  loop mostra
-	JMP BufferLoopMostraProdutos
+	JEQ BufferMostraProdutos; vai para o  loop mostra
+	MOV R8, CANCEL; Coloca o botao cancel em R8
+	MOVB R9, [R8];Coloca o valor do botao em R9
+	CMP R9, 1;Verifica se esta ativo
+	JEQ BufferVoltaRegistos;Se estiver entao volta atras
 EsperaOK:
 	MOV R8, OK; coloca OK em R8
 	MOVB R9, [R8]; Coloca o valor do botao em R9
 	CMP R9,1; verifica se esta a 1;
 	JEQ BufferVoltaRegistos; vai para o  loop mostra
+	MOV R8, CANCEL; Coloca o botao cancel em R8
+	MOVB R9, [R8];Coloca o valor do botao em R9
+	CMP R9, 1;Verifica se esta ativo
+	JEQ BufferVoltaRegistos;Se estiver entao volta atras
+	MOV R8, ON_OFF;COlocao o botao em R8
+	MOVB R9, [R8];COloca o valor do R9
+	CMP R9,1; Verifica se esta ativo
+	JEQ BufferDesligaRegistos; Se estiver entao desliga
 	JMP EsperaOK
 
 
 	;;falta Testar Mostrar os regitos ja feitos e mostra los
+	;;Nao esta a funcinonar o mostra Registos, depois ver
 	;;falta Colocar a multiplicacao a funcionar( so falta colocar as unidades corretas)
 	;;falta colocar o peso em ASCII
