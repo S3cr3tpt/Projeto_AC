@@ -17,6 +17,7 @@ NUMERO9ASCII		EQU			100AH
 NUMERO100			EQU			100CH
 NUMERO10			EQU			100EH
 NUMEROPRODUTOS		EQU			1010H
+ESPACOASCII			EQU			1012H
 
 ;Memoria	
 INICIOPRODUTOS		EQU			0300H
@@ -345,6 +346,7 @@ Constantes:
 	WORD 100; Valor a ser comparado para as decimas
 	WORD 10 ; Valor a ser Multiplicado p
 	WORD 26 ;Numero de produtos +1
+	WORD 32 ; escpaco em ASCII
 
 
 Place 2000H
@@ -947,6 +949,7 @@ BufferColoca0ASCII:
 	MOV R10,[NUMERO0ASCII]
 	JMP ContinuaASCII
 BufferDesligaRegistos:
+	POP R11
 	POP R10
 	POP R9
 	POP R8
@@ -961,6 +964,7 @@ BufferDesligaRegistos:
 	MOV R1,1;e para desligar
 	RET
 BufferVoltaRegistos:
+	POP R11
 	POP R10
 	POP R9
 	POP R8
@@ -981,7 +985,7 @@ BufferAcabaMostraProdutos:
 	JEQ BufferVoltaRegistos;
 	MOV R0, OK; coloca botao de ok no R0
 	MOVB R1,[R0]; coloca o valor do botao ok no R1
-	CMP R1,0;verifica se esta a 0
+	CMP R1, 1;verifica se esta a pressionado
 	JLE BufferVoltaRegistos; se estiver a 0 volta atras
 	JMP BufferAcabaMostraProdutos
 MostraRegistos:
@@ -996,6 +1000,7 @@ MostraRegistos:
 	PUSH R8
 	PUSH R9
 	PUSH R10
+	PUSH R11
 	MOV R0, INICIOPRODUTOS; Coloca o inicio do produto para mostrar
 	MOV R1, [INCERMENTOPRODUTOS]; Coloca no R1 a distancia entre produtos
 	MOV R2, 0 ; Coloca no R2 onde o contador de espacos de memoria
@@ -1004,6 +1009,7 @@ MostraRegistos:
 	MOV R5, Display;coloca o inicio do display no R5
 	MOV R6, Display_end; coloca o fim do display no R5
 	MOV R7,9; verifica se a linha ja acabou
+	MOV R11, [ESPACOASCII]
 	JMP loopMostraProdutos; vai para o loop
 
 BufferMostraProdutos:
@@ -1017,7 +1023,8 @@ loopMostraProdutos:
 	MOV TEMP, [DISTANCIATOTAL]; Coloca a distancia ao total em TEMP
 	ADD R0, TEMP; Vai para onde esta o total
 	MOV TEMP, [R0]; Mete o valor de R0 em 0
-	CMP TEMP, 0; Verifica se nao tem nada, se nao tiver entao nao ha registos
+	shr TEMP,8; comparar so com o primeiro digito, se tiver qualquer coisa etnato e um registo
+	CMP TEMP,R11; Verifica se nao tem nada, se nao tiver entao nao ha registos
 	JLE BufferMostraProdutos; volta a fazer o loop
 	MOV TEMP, [DISTANCIATOTAL]; Coloca a distancia ao total em TEMP
 	SUB R0,TEMP; Vai para o titolo do produto
@@ -1031,15 +1038,18 @@ BufferLoopDisplayMostra:
 	JLE BufferLoopDisplayMostra; se nao vola atras
 	CMP R3,R4;verifica se ja acabou o produto
 	JLE EsperaOK; espera o ok para acabar
+	MOV R5, Display; Volta a colocar o display no incio
+	CALL LimpaPerifericos; Limpa o OK 
 Continua:	
 	MOV R8, OK; coloca OK em R8
 	MOVB R9, [R8]; Coloca o valor do botao em R9
 	CMP R9,1; verifica se esta a 1;
-	JEQ BufferMostraProdutos; vai para o  loop mostra
+	JEQ loopMostraProdutos; vai para o  loop mostra
 	MOV R8, CANCEL; Coloca o botao cancel em R8
 	MOVB R9, [R8];Coloca o valor do botao em R9
 	CMP R9, 1;Verifica se esta ativo
 	JEQ BufferVoltaRegistos;Se estiver entao volta atras
+	JMP Continua; esper pelo ok ou cancel para a proxima acao
 EsperaOK:
 	MOV R8, OK; coloca OK em R8
 	MOVB R9, [R8]; Coloca o valor do botao em R9
