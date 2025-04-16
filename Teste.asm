@@ -1023,7 +1023,7 @@ loopMostraProdutos:
 	MOV TEMP, [DISTANCIATOTAL]; Coloca a distancia ao total em TEMP
 	ADD R0, TEMP; Vai para onde esta o total
 	MOV TEMP, [R0]; Mete o valor de R0 em 0
-	shr TEMP,8; comparar so com o primeiro digito, se tiver qualquer coisa etnato e um registo
+	SHR TEMP,8; comparar so com o primeiro digito, se tiver qualquer coisa etnato e um registo
 	CMP TEMP,R11; Verifica se nao tem nada, se nao tiver entao nao ha registos
 	JLE BufferMostraProdutos; volta a fazer o loop
 	MOV TEMP, [DISTANCIATOTAL]; Coloca a distancia ao total em TEMP
