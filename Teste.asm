@@ -18,6 +18,10 @@ NUMERO100			EQU			100CH
 NUMERO10			EQU			100EH
 NUMEROPRODUTOS		EQU			1010H
 ESPACOASCII			EQU			1012H
+NUMERO10K			EQU 		1014H
+NUMERO1K			EQU 		1016H
+PESODISPLAY			EQU 		1018H
+
 
 ;Memoria	
 INICIOPRODUTOS		EQU			0300H
@@ -50,6 +54,7 @@ incrementos:
 	WORD 68
 	WORD 102
 	WORD 96
+	WORD 120
 Place 0180H
 MostraBotoes:
 	String "Botoes em baixo "
@@ -347,7 +352,9 @@ Constantes:
 	WORD 10 ; Valor a ser Multiplicado p
 	WORD 26 ;Numero de produtos +1
 	WORD 32 ; escpaco em ASCII
-
+	WORD 10000; 10k em decimal para fazer comparacoes
+	WORD 1000; 1k em decimal para fazer comparacoes
+	WORD 104; distancia para o display do peso
 
 Place 2000H
 MenuInicio:
@@ -365,8 +372,8 @@ MenuBalanca:
 	String "    INSIRA      "
 	String "   O PESO E O   "
 	String "    PRODUTO     "
-	String "                "
-	String "                "
+	String "O Peso Atual e :"
+	String "              KG"
 
 Place 2100H
 MenuErro:
@@ -758,6 +765,7 @@ BufferErro:
 	JMP OBalanca
 OBalanca:
 	;carrega o valor dos perifericos
+	CALL MostraPeso; Mostra o peso no display
 	MOV R0, CANCEL; Carrega o botao de Cancel em R0
 	MOVB R1, [R0]; Carrega o valor do botao cancel
 	CMP R1,1 ;verifica se esta pressionao
@@ -1065,8 +1073,94 @@ EsperaOK:
 	JEQ BufferDesligaRegistos; Se estiver entao desliga
 	JMP EsperaOK
 
-
-	;;falta Testar Mostrar os regitos ja feitos e mostra los
-	;;Nao esta a funcinonar o mostra Registos, depois ver
 	;;falta Colocar a multiplicacao a funcionar( so falta colocar as unidades corretas)
 	;;falta colocar o peso em ASCII
+
+MostraPeso:
+	PUSH R0
+	PUSH R1
+	PUSH R2
+	PUSH R3
+	PUSH R4
+	PUSH R5
+	PUSH R6
+	PUSH R7
+
+	MOV R0, PESO; coloca o endereco do peso em R0
+	MOV R1, [R0]; coloca o peso em R1
+	MOV R2, 0; Casa de 10K
+	MOV R3, 0; Casa de 1K
+	MOV R4, 0; Casa de 100
+	MOV R5, 0; Casa de 10
+	MOV R6, 0; casa de 1
+loopPeso10k:
+	MOV TEMP, [NUMERO10K]; Coloca 10000 em TEMP
+	SUB TEMP, 1; para comparar com 9999
+	CMP R1,TEMP;Verifica se o numero ja e menor que 10k
+	JLE loopPeso1k; se o valor for menor passa para 1k
+	ADD R2, 1; adiciona 1 na casa de 10k
+	ADD TEMP, 1; volta a colocar 10k
+	SUB R1, TEMP; tira 10k
+	JMP loopPeso10k; volta atras
+loopPeso1k:
+	MOV TEMP, [NUMERO1K]; Coloca 1000 em TEMP
+	SUB TEMP, 1; para comparar com 999
+	CMP R1,TEMP;Verifica se o numero ja e menor que 1k
+	JLE loopPeso100; se o valor for menor passa para 1k
+	ADD R3, 1; adiciona 1 na casa de 1k
+	ADD TEMP, 1; volta a colocar 1k
+	SUB R1, TEMP; tira 1k
+	JMP loopPeso1k; volta atras
+loopPeso100:
+	MOV TEMP, [NUMERO100]; Coloca 100 em TEMP
+	SUB TEMP, 1; para comparar com 99
+	CMP R1,TEMP;Verifica se o numero ja e menor que 100
+	JLE loopPeso10; se o valor for menor passa para 100
+	ADD R4, 1; adiciona 1 na casa de 100
+	ADD TEMP, 1; volta a colocar 100
+	SUB R1, TEMP; tira 100
+	JMP loopPeso100; volta atras
+loopPeso10:
+	MOV TEMP, [NUMERO10]; Coloca 10 em TEMP
+	SUB TEMP, 1; para comparar com 9
+	CMP R1,TEMP;Verifica se o numero ja e menor que 10
+	JLE AcabaLoopPeso; se o valor for menor passa para 10
+	ADD R5, 1; adiciona 1 na casa de 10k
+	ADD TEMP, 1; volta a colocar 10
+	SUB R1, TEMP; tira 10
+	JMP loopPeso10; volta atras
+AcabaLoopPeso:
+	MOV R6, R1; coloca o restante em R6
+	MOV TEMP, [NUMERO0ASCII]; Coloca em TEMP o 0 em ascii
+	ADD R2, TEMP; Coloca o numero em ASCII
+	ADD R3, TEMP; Coloca o numero em ASCII
+	ADD R4, TEMP; Coloca o numero em ASCII
+	ADD R5, TEMP; Coloca o numero em ASCII
+	ADD R6, TEMP; Coloca o numero em ASCII
+	SHL R2,8; anda 8 casas para a esquerda
+	ADD R2, R3; coloca o outro numero
+	MOV TEMP, [PONTOASCII]; coloca o Ponto
+	SHL TEMP,8 ; Coloca o potno a esquerda
+	ADD TEMP, R4; coloca o outro numero
+	MOV R4, TEMP; guarda esse valor em R4
+	SHL R5, 8; anda 8 casas para a esquerda
+	ADD R5, R6; coloca o outro numero
+
+	MOV TEMP, [PESODISPLAY]; coloca onde a distancia do display no TEMP
+	MOV R7, Display; Coloca o inicio do display em R7
+	ADD R7, TEMP; vai para onde e para escrever
+	MOV [R7], R2; coloca os numeros na memoria
+	ADD R7, 2;avanca 2 casas na memoria
+	MOV [R7], R4; coloca os numeros na memoria
+	ADD R7, 2;avanca 2 casas na memoria
+	MOV [R7], R5; coloca os numeros na memoria
+	POP R7
+	POP R6
+	POP R5
+	POP R4
+	POP R3
+	POP R2
+	POP R1
+	POP R0
+
+	RET
