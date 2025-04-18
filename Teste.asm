@@ -353,7 +353,7 @@ Constantes:
 	WORD 32 ; escpaco em ASCII
 	WORD 10000; 10k em decimal para fazer comparacoes
 	WORD 1000; 1k em decimal para fazer comparacoes
-	WORD 104; distancia para o display do peso
+	WORD 106; distancia para o display do peso
 	WORD 69; Letra E em ASCII
 
 Place 2000H
@@ -988,13 +988,51 @@ loop10:
 	MOV TEMP, [NUMERO10];Coloca 100 em TEMP
     SUB TEMP,1; Colocao  temp a 99 pois se deixarmos a 100 vai dar erros
 	CMP R8, TEMP; Compara o R3 e o TEMP(Que e 100)
-	JLE ColocaASCII;Se for menor que 99 entao vai para as desena
+	JLE BufferColocaASCII;Se for menor que 99 entao vai para as desena
 	ADD TEMP,1 ;Caso nao for volta a por a 100
 	SUB R8, TEMP; tira esses 100
 	ADD R10,1; Coloca 1 na casa das 100k
 	JMP loop10;volta atras
+
+BufferColocaASCII:
+	CMP R8, 4;Caso for 4 ou menos entao nao faz nada
+	JLE ColocaASCII; Salta para a frente
+	ADD R10,1 ;caso for para arredondar entao mete em R10
+	MOV TEMP,[NUMERO10];Coloca o numero 10 em TEMP
+	SUB TEMP,1; Coloca em 9 pois eu quero verificar se e 9 ou menos
+	CMP R10, TEMP;Se for menor ou igual a 9 continua com o programa
+	JLE ColocaASCII; salta para continuar
+	MOV TEMP,[NUMERO10];Volta a colocar 10 no TEMP
+	SUB R10,TEMP;tira 10 do R10 para nao dar erros de display
+	ADD R9,1; adiciona 1 no R9 (carry)
+	MOV TEMP,[NUMERO10];Volta a colocar 10 no TEMP
+	SUB TEMP,1;Quero comparar se for 9
+	CMP R9, TEMP; se for 9 ou menos continua
+	JLE ColocaASCII; continua o programa
+	MOV TEMP,[NUMERO10];Volta a colocar 10 no TEMP
+	SUB R9, TEMP;tira 10 do R9 para nao dar erros de display
+	ADD R5,1; Coloca 1 no R5(Carry)
+	MOV TEMP,[NUMERO10];Volta a colocar 10 no TEMP
+	SUB TEMP, 1;Para comparar com 9
+	CMP R5, TEMP; Verifica se e 9 ou menos
+	JLE ColocaASCII;continua o programa
+	MOV TEMP,[NUMERO10];Volta a colocar 10 no TEMP
+	SUB R5,TEMP; Tira 10 do R5, para daar carry
+	ADD R4,1; Adiciona 1 no R4 (carry)
+	MOV TEMP,[NUMERO10];Volta a colocar 10 no TEMP
+	SUB TEMP, 1; Para Comparar com 9 e nao 10
+	CMP R4, TEMP; verifica se e 9 ou menos
+	JLE ColocaASCII; se for entao continua
+	MOV TEMP,[NUMERO10];Volta a colocar 10 no TEMP
+	SUB R4, TEMP; Tira 10 de R4
+	ADD R3,1; Adiciona 1 no R3, (carry)
+	MOV TEMP,[NUMERO10];Volta a colocar 10 no TEMP
+	SUB TEMP, 1; Para comparar com 9 
+	CMP R3, TEMP; verifica se e 9 ou menos
+	JLE ColocaASCII; se for continua
+	JMP ERROOVERFLOW; caso seja maior entao da overflow 
 ColocaASCII:
-	MOV R11, R8; coloca o resto em R11
+	MOV R11, R8; coloca o resto em R11(nao utilzado depois tirar)
 	MOV R7, R2; Volta ao produto escolhido
 	MOV R6, [DISTANCIATOTAL]; Mete a distancia para o total  em R6
 	ADD R7, R6; coloca O apontador (R7) para o total
@@ -1204,11 +1242,32 @@ loopPeso10:
 	MOV TEMP, [NUMERO10]; Coloca 10 em TEMP
 	SUB TEMP, 1; para comparar com 9
 	CMP R1,TEMP;Verifica se o numero ja e menor que 10
-	JLE AcabaLoopPeso; se o valor for menor passa para 10
+	JLE BufferAcabaLoopPeso; se o valor for menor passa para 10
 	ADD R5, 1; adiciona 1 na casa de 10k
 	ADD TEMP, 1; volta a colocar 10
 	SUB R1, TEMP; tira 10
 	JMP loopPeso10; volta atras
+BufferAcabaLoopPeso:
+	CMP R5, 4; verifica se e perciso arredondar
+	JLE AcabaLoopPeso;se nao entao continua
+	ADD R4,1; se for perciso entao adiciona 1 na proxima casa
+	MOV TEMP, [NUMERO10]; coloca o TEMP a 10
+	SUB TEMP,1; Tira 1 para comparar com 9
+	CMP R4, TEMP; verifica se e 9 ou menos
+	JLE AcabaLoopPeso; se for entao continua
+	MOV TEMP, [NUMERO10]; Volta a colocar o temp a 10
+	SUB R4, TEMP; tira 10 do R4
+	ADD R3,1; e coloca no R3 1 (carry)
+	MOV TEMP, [NUMERO10]; volta a colocar o TEMP a 10
+	SUB TEMP,1; tira 1 para comparar com 9
+	CMP R3, TEMP; se for menor que 9 
+	JLE AcabaLoopPeso; entao continua
+	MOV TEMP, [NUMERO10];volta a colocar o TEMP a 10
+	SUB R3, TEMP; tira 10 do R3
+	ADD R2,1; coloca em R2
+	CMP R2,2; verifica se e 2 ou menos
+	JLE AcabaLoopPeso; se for continua
+	JMP ERROOVERFLOW; se nao isso quer dizer que ja ultrapassou o limite de peso
 AcabaLoopPeso:
 	MOV R6, R1; coloca o restante em R6
 	MOV TEMP, [NUMERO0ASCII]; Coloca em TEMP o 0 em ascii
@@ -1217,6 +1276,7 @@ AcabaLoopPeso:
 	ADD R4, TEMP; Coloca o numero em ASCII
 	ADD R5, TEMP; Coloca o numero em ASCII
 	ADD R6, TEMP; Coloca o numero em ASCII
+
 	SHL R2,8; anda 8 casas para a esquerda
 	ADD R2, R3; coloca o outro numero
 	MOV TEMP, [PONTOASCII]; coloca o Ponto
@@ -1232,8 +1292,7 @@ AcabaLoopPeso:
 	MOV [R7], R2; coloca os numeros na memoria
 	ADD R7, 2;avanca 2 casas na memoria
 	MOV [R7], R4; coloca os numeros na memoria
-	ADD R7, 2;avanca 2 casas na memoria
-	MOV [R7], R5; coloca os numeros na memoria
+
 	POP R7
 	POP R6
 	POP R5
