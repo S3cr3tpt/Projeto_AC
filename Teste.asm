@@ -21,6 +21,7 @@ ESPACOASCII			EQU			1012H
 NUMERO10K			EQU 		1014H
 NUMERO1K			EQU 		1016H
 PESODISPLAY			EQU 		1018H
+LETRAEASCII			EQU			101AH
 
 
 ;Memoria	
@@ -30,8 +31,7 @@ MUDANCACPM			EQU			0062H; isto e simplemente para mudar de
 ;codigo de produto para um valor na memoria
 DISTANCIAPESO		EQU			0064H
 DISTANCIAPRECO		EQU			0066H
-DISTANCIATOTAL		EQU			0068H
-DISTANCIALINHATOTAL	EQU			006AH
+DISTANCIATOTAL		EQU			0068H;
 
 
 
@@ -54,7 +54,6 @@ incrementos:
 	WORD 68
 	WORD 102
 	WORD 96
-	WORD 120
 Place 0180H
 MostraBotoes:
 	String "Botoes em baixo "
@@ -97,7 +96,7 @@ Uvas:
 	String "Preco:          "
 	String "      5.34EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 Place 0370H
 Melancia:	
 	String "101 Melancia    "
@@ -106,7 +105,7 @@ Melancia:
 	String "Preco:          "
 	String "      1.87EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 03E0H
 Ananas:	
@@ -116,7 +115,7 @@ Ananas:
 	String "Preco:          "
 	String "      1.87EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 Place 0450H
 Kiwi:	
 	String "103   Kiwi      "
@@ -125,7 +124,7 @@ Kiwi:
 	String "Preco:          "
 	String "      3.56EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 Place 04C0H
 Pessego:	
 	String "104  Pessego    "
@@ -134,7 +133,7 @@ Pessego:
 	String "Preco:          "
 	String "      4.46EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 Place 0530H
 Banana:	
 	String "105  Banana     "
@@ -143,7 +142,7 @@ Banana:
 	String "Preco:          "
 	String "     2.58EUR/KG"
 	String "Total:          "
-	String "             EUR"	
+	String "              UR"
 
 Place 05A0H
 Morango:	
@@ -153,7 +152,7 @@ Morango:
 	String "Preco:          "
 	String "     4.46EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 0610H
 Framboesa:	
@@ -163,7 +162,7 @@ Framboesa:
 	String "Preco:          "
 	String "     17.81EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 0680H
 Laranja:	
@@ -173,7 +172,7 @@ Laranja:
 	String "Preco:          "
 	String "      1.60EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 06F0H
 Tangerina:	
@@ -183,7 +182,7 @@ Tangerina:
 	String "Preco:          "
 	String "      2.22EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 0760H
 Cenoura:	
@@ -193,7 +192,7 @@ Cenoura:
 	String "Preco:          "
 	String "      1.04EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 07D0H
 Batata:	
@@ -203,7 +202,7 @@ Batata:
 	String "Preco:          "
 	String "      1.14EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 0840H
 Nabo:	
@@ -213,7 +212,7 @@ Nabo:
 	String "Preco:          "
 	String "      2.28EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 08B0H
 Beterraba:	
@@ -223,7 +222,7 @@ Beterraba:
 	String "Preco:          "
 	String "      5.23EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 0920H
 Alho:	
@@ -233,7 +232,7 @@ Alho:
 	String "Preco:          "
 	String "      6.19EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 0990H
 Cebola:	
@@ -243,7 +242,7 @@ Cebola:
 	String "Preco:          "
 	String "     1.43EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 0A00H
 Ervilha:	
@@ -253,7 +252,7 @@ Ervilha:
 	String "Preco:          "
 	String "      1.42EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 0A70H
 Lentilhas:	
@@ -263,7 +262,7 @@ Lentilhas:
 	String "Preco:          "
 	String "      2.19EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 
 Place 0AE0H
@@ -274,7 +273,7 @@ Trigo:
 	String "Preco:          "
 	String "      0.95EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 0B50H
 Milho:	
@@ -284,7 +283,7 @@ Milho:
 	String "Preco:          "
 	String "      3.62EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 0BC0H
 Favas:	
@@ -294,7 +293,7 @@ Favas:
 	String "Preco:          "
 	String "      4.07EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 0C30H
 Castanhas:	
@@ -304,7 +303,7 @@ Castanhas:
 	String "Preco:          "
 	String "      8.92EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 0CA0H
 Noz:	
@@ -314,7 +313,7 @@ Noz:
 	String "Preco:          "
 	String "     18.39EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 
 
@@ -326,7 +325,7 @@ Amendoim:
 	String "Preco:          "
 	String "      8.03EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 Place 0D80H
 Cafe:	
@@ -336,7 +335,7 @@ Cafe:
 	String "Preco:          "
 	String "     20.25EUR/KG"
 	String "Total:          "
-	String "             EUR"
+	String "              UR"
 
 
 	
@@ -355,6 +354,7 @@ Constantes:
 	WORD 10000; 10k em decimal para fazer comparacoes
 	WORD 1000; 1k em decimal para fazer comparacoes
 	WORD 104; distancia para o display do peso
+	WORD 69; Letra E em ASCII
 
 Place 2000H
 MenuInicio:
@@ -401,7 +401,14 @@ MenuConfirmacaoClear:
 	String "    APAGAR TODOS"
 	String "    OS DADOS    "
 	String "    INSERIDOS   "
-
+Place 2270H
+MenuOverFlow:
+	String "                "
+	String "    ATENCAO     "
+	String "    COM O PESO  "
+	String "   ATUAL OCORREU"
+	String "    UM OVERFLOW "
+	String "                "
 
 Place 0000H
 Inicio:	
@@ -430,6 +437,10 @@ ligado:
 	CALL MostraDisplay
 	CALL LimpaPerifericos
 Le_Opcao:
+	MOV R0, ON_OFF
+	MOVB R1, [R0]
+	CMP R1, 1
+	JEQ Principio
 	MOV R0, Sel_Nr_Menu
 	MOV R3, [OK]
 	MOVB R1, [R0]
@@ -729,6 +740,9 @@ LoopRemover:
 	MOV R5,R2; Copia tambem para o R5
 	MOV R6, [DISTANCIAPESO]; Coloca em R6 a disancia ao peso
 	MOV R7,CaracterVazio ; Colloca 20H em R7
+	SHL R7, 8; Vai 2 casas para a esquerda
+	MOV TEMP, CaracterVazio; Coloca o caracter vazio em TEMP
+	ADD R7,TEMP;Coloca em R7 2020H
 	ADD R5, R6; Vai para o Peso
 	MOV [R5], R7; Apaga a primeira casa do peso
 	ADD R5, 2;avanca
@@ -762,6 +776,10 @@ BufferClear:
 ;------------------	
 BufferErro:
 	CALL RotinaERROBalanca
+	CALL Espera
+	MOV R2, MenuBalanca
+	CALL MostraDisplay
+	CALL LimpaPerifericos
 	JMP OBalanca
 OBalanca:
 	;carrega o valor dos perifericos
@@ -804,7 +822,7 @@ OBalanca:
 
 CicloEncontraFruta:
 	CMP R2,0
-	JEQ BufferDisplay
+	JLE BufferDisplay
 	ADD R5,R6
 	SUB R2, 1
 	JMP CicloEncontraFruta
@@ -813,8 +831,26 @@ BufferDisplay:
 	CALL EditarPrint
 	CALL MostraDisplay
 	CALL LimpaPerifericos
+	CALL Espera
+
+	MOV R2, MenuBalanca
+	CALL MostraDisplay
+	CALL LimpaPerifericos
 	JMP OBalanca
+
+ERROOVERFLOW:
+	POP TEMP
+	POP R11
+	POP R10
+	POP R9
+	POP R8
+	POP R7
+	POP R6
+	POP R2
+	MOV R2, MenuOverFlow
+	RET
 EditarPrint:
+	PUSH R2
 	PUSH R6
 	PUSH R7
 	PUSH R8
@@ -823,8 +859,9 @@ EditarPrint:
 	PUSH R11
 	PUSH TEMP
 
-	MOV R6, [DISTANCIAPESO]; mete em r6 a distancia ao peso
-	MOV R7, R5
+	MOV R6, [DISTANCIAPESO]; Coloca a distancia para escrever o peso
+	ADD R6,4; Para colocar no fim da linha
+	MOV R7, R5; coloca no produto certo
 	MOV R8, [MASCARAANTESVIRGULA];colocaar em R8 00FF
 	MOV R9, [MASCARADPSVIRGULA]; colocar em R9 FF00
 	MOV R10,[NUMERO0ASCII] ; COLOCAR O NUMERO 0 ASCII EM R10 MUDAR ISTO PARA DINAMICO DEPOIS
@@ -833,11 +870,29 @@ EditarPrint:
 	AND R9, R3 ;Vai buscar os numeros depois da virgula
 	SHR R9,8	;coloca os bits na parte menos significativa
 	ADD R7,R6	;passa para a casa para escrever o peso
-	MOV [R7],R8;Coloca a parte inteira
-	ADD R7,2;avanca
-	MOV [R7], TEMP; coloca o ponto
-	ADD R7,2;avanca
-	MOV [R7], R9;coloca a parte decimal
+
+	MOV TEMP, [PESODISPLAY]; coloca o temp a distancia que o peso esta escrito
+	MOV R1, Display; coloca em R1 onde esta o dispalay
+	ADD R1, TEMP; Coloca o temp onde esta escrito
+
+	MOV R6, [DISTANCIAPESO]; mete em r6 a distancia ao peso
+	MOV TEMP,[R1];Coloca em TEMP o que esta em R1
+	MOV [R7],TEMP; Copia de antes
+	ADD R7,2; avanca
+	ADD R1,2;avaca 
+	MOV TEMP,[R1];Coloca em TEMP o que esta em R1
+	MOV [R7],TEMP; Copia de antes
+	ADD R7,2; avanca
+	ADD R1,2;avaca 
+	MOV TEMP,[R1];Coloca em TEMP o que esta em R1
+	MOV [R7],TEMP; Copia de antes
+	ADD R7,2; avanca
+	ADD R1,2;avaca 
+	MOV TEMP,[R1];Coloca em TEMP o que esta em R1
+	MOV [R7],TEMP; Copia de antes
+	ADD R7,2; avanca
+	ADD R1,2;avaca 
+
 	MOV R6, [DISTANCIAPRECO] ; coloca a distancia ao preco para ir buscalo
 	MOV R7, R5	; volta ao inicio para o incremento estar certo
 	ADD R7,R6	;POE O APONTADOR R7 PARA O PRECO
@@ -852,6 +907,7 @@ EditarPrint:
 	SUB R8, R10 ; passa o valor R8 de ASCII para unidade
 	MOV TEMP, [NUMERO10]; Coloca o numero 10 em 
 	MUL R8, TEMP; Multiplica R8 por 10
+	JV ERROOVERFLOW; Caso haja overflow entao da erro
 	JMP SomaUnidades; Salta para o SomaUnidades
 R8NaoASCII:
 	MOV R8,0; Caso o R8 nao for um valor ASCII
@@ -869,82 +925,101 @@ SomaUnidades:
 	AND R11, TEMP; coloca o R11 SO com o segundo digito
 	SUB R11, R10; Transforma o R11 de ASCII para unidades
 	MOV TEMP, [NUMERO10]; Coloca o numero 10 em 
-	MUL R9, Temp; Multiplica R9 por 10
+	MUL R9, TEMP; Multiplica R9 por 10
 	ADD R9,R11; Coloca em R9, o valor total das decimas
 	MUL R9, R3; Multiplica a parte decimal pelo peso
-	MOV TEMP, [NUMERO100]; Coloca em TEMP o numero 100
 	MOV R11, 0;Coloca o R11 a 0 para ser o valor adicionado caso as decimas sejam superiores a 100
 LoopDecimas:
-	SUB TEMP,1 ; Para quando for 99
-	CMP R9,TEMP ;Verifica se o R9 e maior que 100
+	MOV R1, [NUMERO100]; Coloca em R1 o numero 100
+	SUB R1,1 ; Para quando for 99
+	CMP R9,R1 ;Verifica se o R9 e maior que 100
 	JLE HexaToASCIIToMemory;salta para o proximo passo se for
-	ADD TEMP,1;Volta a colocar antes de subtrair
-	SUB R9, TEMP; Subtrai 100 
+	ADD R1,1;Volta a colocar antes de subtrair
+	JV ERROOVERFLOW; Caso haja overflow entao da erro
+	SUB R9, R1; Subtrai 100 
 	ADD R11, 1; Adiciona 1 para as unidades
 	JMP LoopDecimas; Volta ao inicio do loop
+
 HexaToASCIIToMemory:
 	ADD R8, R11; Adiciona o valor obtido antes para R8
-	MOV R3, 0; Carrega a casa das centenas
-	MOV R4,0; Carrega a casa das desenas
-	MOV R5,0;Carrega a casa das unidades
-	MOV R10,0; Carrega a casa das decimas
-	MOV R11,0;Carrega a Casa dasd cente
-LoopCentenas:
+	MOV R3,0; carrega a casa das 1k
+	MOV R4,0; Carrega a casa das 100
+	MOV R5,0; Carrega a casa das 10
+	MOV R9,0; Carrega a casa das 1
+	MOV R10,0; Carrega a casa das 0.1
+	MOV R11,0;Carrega a Casa das 0.01
+loop10k:
+	MOV TEMP, [NUMERO10K];Coloca 100 em TEMP
+    SUB TEMP,1; Colocao  temp a 99 pois se deixarmos a 100 vai dar erros
+	CMP R8, TEMP; Compara o R3 e o TEMP(Que e 100)
+	JLE Buffer10k;Se for menor que 99 entao vai para as desena
+	ADD TEMP,1 ;Caso nao for volta a por a 100
+	SUB R8, TEMP; tira esses 100
+	ADD R4,1; Coloca 1 na casa das 100k
+	JMP loop10k;volta atras
+Buffer10k:
+	MOV TEMP, [NUMERO10]; Coloca o numero 10 em temp
+    SUB TEMP,1; Colocao  temp a 99 pois se deixarmos a 100 vai dar erros
+	CMP R4, TEMP; Compara o R3 e o TEMP(Que e 100)
+	JLE loop1k;Se for menor que 99 entao vai para as desena
+	ADD TEMP,1 ;Caso nao for volta a por a 100
+	SUB R4, TEMP; tira esses 100
+	ADD R3,1; Coloca 1 na casa das 100k
+	JMP Buffer10k;volta atras
+loop1k:
+	MOV TEMP, [NUMERO1K];Coloca 100 em TEMP
+    SUB TEMP,1; Colocao  temp a 99 pois se deixarmos a 100 vai dar erros
+	CMP R8, TEMP; Compara o R3 e o TEMP(Que e 100)
+	JLE loop100;Se for menor que 99 entao vai para as desena
+	ADD TEMP,1 ;Caso nao for volta a por a 100
+	SUB R8, TEMP; tira esses 100
+	ADD R5,1; Coloca 1 na casa das 100k
+	JMP loop1k;volta atras
+loop100:
 	MOV TEMP, [NUMERO100];Coloca 100 em TEMP
     SUB TEMP,1; Colocao  temp a 99 pois se deixarmos a 100 vai dar erros
 	CMP R8, TEMP; Compara o R3 e o TEMP(Que e 100)
-	JLE LoopDesenas;Se for menor que 99 entao vai para as desena
+	JLE loop10;Se for menor que 99 entao vai para as desena
 	ADD TEMP,1 ;Caso nao for volta a por a 100
 	SUB R8, TEMP; tira esses 100
-	ADD R3,1; Coloca 1 na casa das Centenas
-	JMP LoopCentenas;volta atras
-LoopDesenas:
-	MOV TEMP, [NUMERO10]; Coloca o Temp com o valor 10
-    SUB TEMP,1; Colocao  temp a 9 pois se deixarmos a 10 vai dar erros
-	CMP R8, TEMP; Compara o R3 e o TEMP(Que e 10)
-	JLE BufferUnidades;Se for menor que 9 entao vai para as unidades
-	ADD TEMP,1 ;Caso nao for volta a por a 10
-	SUB R8, TEMP; tira esses 10
-	ADD R4,1; Coloca 1 na casa das Desenas
-	JMP LoopDesenas; volta atras
-BufferUnidades:
-	MOV R5,R8; Coloca o restante das unidades em R5
-LoopDecimas2:
-	MOV TEMP, [NUMERO10]; Coloca o Temp com o valor 10
-    SUB TEMP,1; Colocao  temp a 9 pois se deixarmos a 10 vai dar erros
-	CMP R9,TEMP; Compara o R3 e o TEMP(Que e 10)
-	JLE BufferCentenas;Se for menor que 9 entao vai para as decimas
-	ADD TEMP,1 ;Caso nao for volta a por a 10
-	SUB R9, TEMP; tira esses 10
-	ADD R10,1; Coloca 1 na casa das decimas
-	JMP LoopDecimas2;volta atras
-BufferCentenas:
-	MOV R11, R9;Carrega o restante em R11(centesimas)
+	ADD R9,1; Coloca 1 na casa das 100k
+	JMP loop100;volta atras
+loop10:
+	MOV TEMP, [NUMERO10];Coloca 100 em TEMP
+    SUB TEMP,1; Colocao  temp a 99 pois se deixarmos a 100 vai dar erros
+	CMP R8, TEMP; Compara o R3 e o TEMP(Que e 100)
+	JLE ColocaASCII;Se for menor que 99 entao vai para as desena
+	ADD TEMP,1 ;Caso nao for volta a por a 100
+	SUB R8, TEMP; tira esses 100
+	ADD R10,1; Coloca 1 na casa das 100k
+	JMP loop10;volta atras
 ColocaASCII:
-	MOV R7, R2; VVolta ao produto escolhido
-	MOV R6, [DISTANCIATOTAL]; Mete a distancia para o total em R6
+	MOV R11, R8; coloca o resto em R11
+	MOV R7, R2; Volta ao produto escolhido
+	MOV R6, [DISTANCIATOTAL]; Mete a distancia para o total  em R6
 	ADD R7, R6; coloca O apontador (R7) para o total
 	MOV TEMP, [NUMERO0ASCII]; Coloca 30H em TEMP para transformar os numeros em ASCII
 	ADD R3,TEMP; Coloca o numero em ASCII
 	ADD R4,TEMP; Coloca o numero em ASCII
 	ADD R5,TEMP; Coloca o numero em ASCII
+	ADD R9,TEMP; Coloca o numero em ASCII
 	ADD R10,TEMP; Coloca o numero em ASCII
 	ADD R11,TEMP; Coloca o numero em ASCII
-	SHL R3,8; Coloca o valor 8 casas para a esquerda(Casa das centenas)
-	ADD R3,R4; Coloca o valor de R4 na segunda parte(casa das desenas)
-	MOV [R7],R3; Coloca isso na memoria
+	MOV [R7], R3; Coloca o valor De r3 em R7
+	ADD R7,2; Avanca 2 casas
+	SHL R4,8; Coloca o valor 8 casas para a esquerda(Casa das centenas)
+	ADD R4,R5; Coloca o valor de R4 na segunda parte(casa das desenas)
+	MOV [R7],R4; Coloca isso na memoria
 	ADD R7, 2; Avanca 2 casas
-	SHL R5,8 ; Colocao valor 8 casas para a esquerda,(unidades)
 	MOV TEMP, [PONTOASCII]; Coloca o pornto em ascii no TEMP
-	ADD R5,TEMP; Coloca o POnto depois das unidades
-	MOV [R7], R5; Coloca isso na memoria
+	SHL TEMP, 8 ;Coloca o valor de R9 2 casas para a esquerda
+	ADD R9,TEMP; Coloca o POnto depois das unidades
+	MOV [R7], R9; Coloca isso na memoria
 	ADD R7,2 ;Avanca 2 casas na memoria
-	CMP R10,0; Verifica se e 0
-	JEQ BufferColoca0ASCII
-ContinuaASCII:
 	SHL R10,8 ;Coloca o valor 8 casas a esquerda ( decimas)
-	ADD R10,R11;Coloca o valor das centsimas
-	MOV [R7],R6; Coloca isso na memoria
+	MOV TEMP, [LETRAEASCII]; coloca a letra E
+	ADD R10,TEMP;Coloca o valor das centsimas
+	MOV [R7],R10; Coloca isso na memoria
 	POP TEMP
 	POP R11
 	POP R10
@@ -952,10 +1027,13 @@ ContinuaASCII:
 	POP R8
 	POP R7
 	POP R6
+	POP R2
 	RET
 BufferColoca0ASCII:
-	MOV R10,[NUMERO0ASCII]
-	JMP ContinuaASCII
+
+
+
+
 BufferDesligaRegistos:
 	POP R11
 	POP R10
@@ -1016,11 +1094,13 @@ MostraRegistos:
 	MOV R4, 0; contador dos produtos
 	MOV R5, Display;coloca o inicio do display no R5
 	MOV R6, Display_end; coloca o fim do display no R5
-	MOV R7,9; verifica se a linha ja acabou
-	MOV R11, [ESPACOASCII]
+	MOV R7,0; Variavel para ficar como temporaria
+	MOV R11, [NUMERO0ASCII]; coloca 0 em R11
+	SUB R11, 1; para comparar com o 0 tambem
 	JMP loopMostraProdutos; vai para o loop
 
 BufferMostraProdutos:
+	MOV R2, 0; volta a colocar o R2 a 0
 	MOV TEMP, [DISTANCIATOTAL]; Coloca a distancia ao total em TEMP
 	SUB R0,TEMP; Vai para o titolo do produto
 	ADD R0,R1; vai para o proximo produto
@@ -1030,9 +1110,10 @@ loopMostraProdutos:
 	ADD R4,1; Adiciona 1 ao contador
 	MOV TEMP, [DISTANCIATOTAL]; Coloca a distancia ao total em TEMP
 	ADD R0, TEMP; Vai para onde esta o total
-	MOV TEMP, [R0]; Mete o valor de R0 em 0
-	SHR TEMP,8; comparar so com o primeiro digito, se tiver qualquer coisa etnato e um registo
-	CMP TEMP,R11; Verifica se nao tem nada, se nao tiver entao nao ha registos
+	MOV R7, [R0]; Mete o valor de R0 em 0
+	MOV TEMP, [MASCARAANTESVIRGULA]; COLOCA 00FF EM TEMP 
+	AND R7,TEMP; para obter so o segundo valor
+	CMP R7,R11; Verifica se nao tem nada, se nao tiver entao nao ha registos
 	JLE BufferMostraProdutos; volta a fazer o loop
 	MOV TEMP, [DISTANCIATOTAL]; Coloca a distancia ao total em TEMP
 	SUB R0,TEMP; Vai para o titolo do produto
@@ -1047,6 +1128,8 @@ BufferLoopDisplayMostra:
 	CMP R3,R4;verifica se ja acabou o produto
 	JLE EsperaOK; espera o ok para acabar
 	MOV R5, Display; Volta a colocar o display no incio
+	SUB R0, R2; Volta a colocar no inicio do produto
+	ADD R0, R1; Vai para o proximo produto
 	CALL LimpaPerifericos; Limpa o OK 
 Continua:	
 	MOV R8, OK; coloca OK em R8
@@ -1072,9 +1155,6 @@ EsperaOK:
 	CMP R9,1; Verifica se esta ativo
 	JEQ BufferDesligaRegistos; Se estiver entao desliga
 	JMP EsperaOK
-
-	;;falta Colocar a multiplicacao a funcionar( so falta colocar as unidades corretas)
-	;;falta colocar o peso em ASCII
 
 MostraPeso:
 	PUSH R0
@@ -1162,5 +1242,19 @@ AcabaLoopPeso:
 	POP R2
 	POP R1
 	POP R0
-
 	RET
+
+Espera:
+	PUSH R0
+	PUSH R1
+loopEspera:
+	MOV R0, OK;Coloca no R0 o endereco de ol
+	MOVB R1, [R0];Coloca o valor OK Em R1
+	CMP R1, 0; Verifica se ainda esta a 0
+	JEQ loopEspera; Acaba o loop
+Acabaloop:
+	POP R1
+	POP R0
+	RET
+	
+	;;falta Colocar a multiplicacao a funcionar( so falta colocar as unidades corretas)
