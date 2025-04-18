@@ -1,43 +1,43 @@
 ; Perifericos
-ON_OFF				EQU			190H
-Sel_Nr_Menu			EQU			1A0H
-OK					EQU			1B0H
-CHANGE				EQU			1C0H
-CANCEL				EQU			1D0H
-PESO				EQU			1E0H
-PRODUTO				EQU 		1F0H
+ON_OFF				EQU			190H;Endereco do botao ON_OFF
+Sel_Nr_Menu			EQU			1A0H;Endereco do botao de select
+OK					EQU			1B0H;Endereco do botao Ok
+CHANGE				EQU			1C0H;Endereco do botao CHANGE
+CANCEL				EQU			1D0H;Endereco do botao CANCEL
+PESO				EQU			1E0H;Endereco do botao PESO
+PRODUTO				EQU 		1F0H;Endereco do botao PRODUTO
 
 ;Constantes
-LIMITEPESO			EQU			1000H
-PONTOASCII			EQU			1002H
-MASCARAANTESVIRGULA	EQU			1004H
-MASCARADPSVIRGULA	EQU			1006H
-NUMERO0ASCII		EQU			1008H
-NUMERO9ASCII		EQU			100AH
-NUMERO100			EQU			100CH
-NUMERO10			EQU			100EH
-NUMEROPRODUTOS		EQU			1010H
-ESPACOASCII			EQU			1012H
-NUMERO10K			EQU 		1014H
-NUMERO1K			EQU 		1016H
-PESODISPLAY			EQU 		1018H
-LETRAEASCII			EQU			101AH
+LIMITEPESO			EQU			1000H; Endereco da contante LIMITEPESO		
+PONTOASCII			EQU			1002H; Endereco da contante PONTOASCII		
+MASCARAANTESVIRGULA	EQU			1004H; Endereco da contante MASCARAANTESVIRGULA
+MASCARADPSVIRGULA	EQU			1006H; Endereco da contante MASCARADPSVIRGULA
+NUMERO0ASCII		EQU			1008H; Endereco da contante NUMERO0ASCII	
+NUMERO9ASCII		EQU			100AH; Endereco da contante NUMERO9ASCII	
+NUMERO100			EQU			100CH; Endereco da contante NUMERO100		
+NUMERO10			EQU			100EH; Endereco da contante NUMERO10		
+NUMEROPRODUTOS		EQU			1010H; Endereco da contante NUMEROPRODUTOS	
+ESPACOASCII			EQU			1012H; Endereco da contante ESPACOASCII		
+NUMERO10K			EQU 		1014H; Endereco da contante NUMERO10K		
+NUMERO1K			EQU 		1016H; Endereco da contante NUMERO1K		
+PESODISPLAY			EQU 		1018H; Endereco da contante PESODISPLAY		
+LETRAEASCII			EQU			101AH; Endereco da contante LETRAEASCII		
 
 
 ;Memoria	
-INICIOPRODUTOS		EQU			0300H
-INCERMENTOPRODUTOS	EQU			0060H
+INICIOPRODUTOS		EQU			0300H; Endereco de onde esta o inicio dos produtos
+INCERMENTOPRODUTOS	EQU			0060H; Endereco ond esta distancia entre cada produto
 MUDANCACPM			EQU			0062H; isto e simplemente para mudar de
 ;codigo de produto para um valor na memoria
-DISTANCIAPESO		EQU			0064H
-DISTANCIAPRECO		EQU			0066H
-DISTANCIATOTAL		EQU			0068H;
+DISTANCIAPESO		EQU			0064H; Enderenco onde estaa distancia que o peso esta do inicio do produto
+DISTANCIAPRECO		EQU			0066H; Enderenco onde estaa distancia que o preco esta do inicio do produto
+DISTANCIATOTAL		EQU			0068H; Enderenco onde estaa distancia que o total esta do inicio do produto
 
 
 
 ; Display
-Display				EQU			210H
-Display_end 		EQU			27FH
+Display				EQU			210H; Endereco de onde esta o inicio do display
+Display_end 		EQU			27FH; Endereco de onde esta o fim do display
 CaracterVazio 		EQU 		20H			; Caracter para limpar o ecra
 
 MBalanca			EQU 		1			; Opcao de Balanca
@@ -47,17 +47,16 @@ OLimpa				EQU 		3			; Opcao de Limpar
 ;StackPointer 		EQU 		6000H 
 
 Place 0060H
-incrementos:
-	WORD 112
-	WORD 100
-	WORD 36
-	WORD 68
-	WORD 102
-	WORD 96
+incrementos: 
+	WORD 112 ; Incrementeo em decimal dos produtos
+	WORD 100;  Para tirar 100 do codigo do produto
+	WORD 36; a distancia em decimal do peso
+	WORD 68; a distancia em decimal do preco
+	WORD 102; a distancia em decimal do total
+; Strings para ajudar a ler as posicoes memoria
 Place 0180H
 MostraBotoes:
 	String "Botoes em baixo "
-
 Place 0192H
 BOnOff:
 	String "On_off        "
@@ -87,7 +86,7 @@ BProduto:
 	String "Produto       "
 
 
-;Tabela dos Precos e Nomes 
+;Tabelas dos Precos e Nomes 
 Place 0300H
 Uvas:	
 	String "100   Uvas      "
@@ -338,7 +337,7 @@ Cafe:
 	String "              UR"
 
 
-	
+;Aqui estao guardadas as constantes de antes
 Place 1000H
 Constantes:
 	WORD 30000; maior que 30 kg
@@ -355,7 +354,7 @@ Constantes:
 	WORD 1000; 1k em decimal para fazer comparacoes
 	WORD 106; distancia para o display do peso
 	WORD 69; Letra E em ASCII
-
+;Aqui estao os menus
 Place 2000H
 MenuInicio:
 	String " MENU PRINCIPAL "
@@ -409,71 +408,69 @@ MenuOverFlow:
 	String "   ATUAL OCORREU"
 	String "    UM OVERFLOW "
 	String "                "
-
+;isto e para conseguir ir para o principio do programa sem erros
 Place 0000H
 Inicio:	
 		MOV R0, Principio
 		JMP R0
-
+;onde o programa comeca
 Place 3000H
-
 ;inicializar o stackpoint para o Call funcuonar
 pilha:
 	STACK 50H;
 StackPointer:
 
 Principio:
-
-	MOV SP, StackPointer
-	CALL LimpaDisplay
-	CALL LimpaPerifericos
-	MOV R0, ON_OFF
+	MOV SP, StackPointer; para inicializar o stackpointer(nao usado depois retirar)
+	CALL LimpaDisplay;Apagar tudo o que esta escrito 
+	CALL LimpaPerifericos; apagar tudo dos perifericos
+	MOV R0, ON_OFF; Coloca o botao de on Em R0
 Liga:
-	MOVB R1, [R0]
-	CMP R1, 1
-	JNE Liga
+	MOVB R1, [R0]; coloca o valor em R1
+	CMP R1, 1; verifica se esta presionado
+	JNE Liga; se nao estiver entao continua no liga
 ligado:	
-	MOV R2, MenuInicio
-	CALL MostraDisplay
-	CALL LimpaPerifericos
+	MOV R2, MenuInicio ;coloca em R2 o menu de inicio
+	CALL MostraDisplay; mostra esse menu
+	CALL LimpaPerifericos; limpa os perifericos
 Le_Opcao:
-	MOV R0, ON_OFF
-	MOVB R1, [R0]
-	CMP R1, 1
-	JEQ Principio
-	MOV R0, Sel_Nr_Menu
-	MOV R3, [OK]
-	MOVB R1, [R0]
+	MOV R0, ON_OFF; Coloca o endereco do On off em R0
+	MOVB R1, [R0]; Colocao valor do botao em R1
+	CMP R1, 1; verifica se esta ligado
+	JEQ Principio; se estiver entao desliga
+	MOV R0, Sel_Nr_Menu; coloca em R0 o endereco do select
+	MOV R3, [OK]; Coloca em R3 o valor do ok
+	MOVB R1, [R0]; Coloca em R1 o valor do on off
 	CMP R3,0; Caso o OK esteja a 0 entao volta atras
 	JLE Le_Opcao;volta atras
 	CMP R1, 0;caso nada seja selecionado volta atras
 	JEQ Le_Opcao; volta atras
 	CMP R1, MBalanca;OPCAO 1
-	JEQ BufferBalanca
+	JEQ BufferBalanca;vai para o buffer da balanca
 	CMP R1, MRegistos;OPCAO 2
-	JEQ BufferRegistos
+	JEQ BufferRegistos; vai para o buffer de registos
 	CMP R1, OLimpa; Opcao 3
-	CALL ConfirmacaoClear;
-	CMP R1,1
-	JEQ ligado
-	CALL RotinaERRO
-	JMP ligado
+	CALL ConfirmacaoClear; vai para a confirmacao do clera
+	CMP R1,1; se o R1 for a 1 quer dizer que foi recebido o valor para mostrar o menu inicial
+	JEQ ligado; ; vai para o inicio para mostrar o menu
+	CALL RotinaERRO;caso nada disso de certo etnao vai para a rotina de erro
+	JMP ligado; vai para o menu inicial
 
 BufferRegistos:
-	CALL LimpaPerifericos
-	CALL MostraRegistos
-	MOV R2, MenuInicio
-	CALL MostraDisplay
-	CALL LimpaPerifericos
-	CMP R1,1 ;Compara com 1, caso seja 1 desliga
+	CALL LimpaPerifericos; Limpa os perifericos
+	CALL MostraRegistos; vai para a rotina de mostra regisots
+	MOV R2, MenuInicio; depois mostra o menu inicial
+	CALL MostraDisplay; da display do menu
+	CALL LimpaPerifericos; limpa os perifericos outraves
+	CMP R1,1 ;Compara com 1, caso seja 1 desliga; para verificar se e para desligar
 	JEQ Principio; Volta ao desligado
-	JMP Le_Opcao
+	JMP Le_Opcao; caso nao seja entao volta so para a opvao
 
 BufferBalanca:
-	MOV R2, MenuBalanca
-	CALL MostraDisplay
-	CALL LimpaPerifericos
-	JMP OBalanca
+	MOV R2, MenuBalanca; coloca o endereco da balanca em R2
+	CALL MostraDisplay ;mostra o menu
+	CALL LimpaPerifericos; limpa os perifericos
+	JMP OBalanca; volta para a balanca
 
 BufferMostraDisplayProdutos:
 	CALL MostraDisplayProdutos; Chama a funcao para mostrar os produtos
@@ -483,7 +480,7 @@ BufferMostraDisplayProdutos:
 	JMP BufferVoltaBalanca; Volta para a balanca
 
 ;------------------
-;   Rotina Erro
+;   Rotinas Erro
 ;------------------				
 RotinaERRO:
 	PUSH R0
@@ -513,7 +510,7 @@ RotinaERROBalanca:
 	POP R2;
 	POP R8;
 	RET 
-
+; para mostrar o que esta no enderco R2
 MostraDisplay:
 	PUSH R0
 	PUSH R1
@@ -536,7 +533,6 @@ Ciclo:
 ;----------------------
 ;MostraDisplay Produtos
 ;----------------------
-
 MostraDisplayProdutos:
 	PUSH R0
 	PUSH R1
@@ -583,6 +579,7 @@ LoopDisplay:
 	JEQ AcabaDisplay; AcabR2a o display e volta a aparecer o menu
 	CMP R4, 0; Verifica se o utilizador quer continuar
 	JLE LoopDisplay; Volta atras caso nao quira
+	CALL LimpaDisplay; para limpar o display
 LoopLinhaDisplay:
 	ADD R6, 1; Incrementa 1 nos produtos
 	CMP R9, R6; Verifica se ja acabou os produtos
@@ -628,13 +625,11 @@ AcabaDisplay:
 	POP R2
 	POP R1
 	POP R0
-	CALL LimpaPerifericos
+	CALL LimpaPerifericos; para limpar os perifericos
 	RET
 ;--------------------
 ; Limpa Perifericos
 ;--------------------				
-
-		
 LimpaPerifericos:
 	PUSH R0
 	PUSH R1
@@ -643,33 +638,33 @@ LimpaPerifericos:
 	PUSH R4
 	PUSH R5
 	PUSH R6
-	MOV R0, ON_OFF
-	MOV R1, Sel_Nr_Menu
-	MOV R2, OK
-	MOV R3, CHANGE
-	MOV R4, CANCEL
-	MOV R5, PESO 
-	MOV R6, PRODUTO
-	MOV R7, 0
-	MOV R8, 0
+	MOV R0, ON_OFF; coloca em R0 o endereco de ON_OFF
+	MOV R1, Sel_Nr_Menu; coloca em R1 o endereco de Sel_Nr_Menu
+	MOV R2, OK; coloca em R2 o endereco de OK
+	MOV R3, CHANGE; coloca em R3 o endereco de CHANGE
+	MOV R4, CANCEL; coloca em R4 o endereco de CANCEL
+	MOV R5, PESO ; coloca em R5 o endereco de PESO 
+	MOV R6, PRODUTO; coloca em R6 o endereco de PRODUTO
+	MOV R7, 0; coloca em R7 0
+	MOV R8, 0; coloca em R8 0 
 CicloLimpaPerifericos:; Para limpar os 2 brimeiros bits
-	ADD R0,R8		
-	ADD R1,R8
-	ADD R2,R8
-	ADD R3,R8
-	ADD R4,R8
-	ADD R5,R8
-	ADD R6,R8
-	MOVB [R0], R7
-	MOVB [R1], R7
-	MOVB [R2], R7
-	MOVB [R3], R7
-	MOVB [R4], R7
-	MOVB [R5], R7
-	MOVB [R6], R7
-	ADD R8, 1
-	CMP R8, 1
-	JEQ CicloLimpaPerifericos
+	ADD R0,R8; Isto e para limpar o peimeiro depois e inrementado para limpar o segundo		
+	ADD R1,R8; Isto e para limpar o peimeiro depois e inrementado para limpar o segundo
+	ADD R2,R8; Isto e para limpar o peimeiro depois e inrementado para limpar o segundo
+	ADD R3,R8; Isto e para limpar o peimeiro depois e inrementado para limpar o segundo
+	ADD R4,R8; Isto e para limpar o peimeiro depois e inrementado para limpar o segundo
+	ADD R5,R8; Isto e para limpar o peimeiro depois e inrementado para limpar o segundo
+	ADD R6,R8; Isto e para limpar o peimeiro depois e inrementado para limpar o segundo
+	MOVB [R0], R7; para limpa o primeiro bit
+	MOVB [R1], R7; para limpa o primeiro bit
+	MOVB [R2], R7; para limpa o primeiro bit
+	MOVB [R3], R7; para limpa o primeiro bit
+	MOVB [R4], R7; para limpa o primeiro bit
+	MOVB [R5], R7; para limpa o primeiro bit
+	MOVB [R6], R7; para limpa o primeiro bit
+	ADD R8, 1 ; passa para o segundo
+	CMP R8, 1; verifica se ja limpou os 2
+	JEQ CicloLimpaPerifericos; se nao volta a fazer
 	POP R6
 	POP R5
 	POP R4
@@ -678,24 +673,21 @@ CicloLimpaPerifericos:; Para limpar os 2 brimeiros bits
 	POP R1
 	POP R0
 	RET
-
 ;------------------
 ;  Limpa Display
 ;------------------	
-
-	
 LimpaDisplay:
 	PUSH R0
 	PUSH R1
 	PUSH R2		
-	MOV R0, Display
-	MOV R1, Display_end
+	MOV R0, Display; Guarda o inicio do display e R0
+	MOV R1, Display_end; Guarda o fim do display e R1
 CicloLimpa:	
-	MOV R2, CaracterVazio
-	MOVB [R0], R2
-	ADD R0, 1
-	CMP R0, R1
-	JLE CicloLimpa
+	MOV R2, CaracterVazio; coloca 20H em R2
+	MOVB [R0], R2; Coloca no enderco R0 o caracgter vazio
+	ADD R0, 1;anda 1 para a direita 
+	CMP R0, R1; enquanto nao acabou vai limpando
+	JLE CicloLimpa; voltar a limpar 
 	POP R2
 	POP R1
 	POP R0		
@@ -704,10 +696,11 @@ CicloLimpa:
 ;----------------------------------------------------------------
 ;Buffers para voltar ao inicio
 ;----------------------------------------------------------------
-BufferCancel:JMP ligado	
-BufferDesliga: JMP Principio
-BufferMostraDisplay: JMP BufferMostraDisplayProdutos
-BufferVoltaBalanca: JMP OBalanca
+BufferCancel:JMP ligado	; buffer porque nao da para saltar mais que 100H na memoria
+BufferDesliga: JMP Principio; buffer porque nao da para saltar mais que 100H na memoria
+BufferMostraDisplay: JMP BufferMostraDisplayProdutos; buffer porque nao da para saltar mais que 100H na memoria
+BufferVoltaBalanca: JMP OBalanca; buffer porque nao da para saltar mais que 100H na memoria
+
 ;-----------------------------------------------------
 ;Isto e simplemente para dar clear nos registos pois 
 ;estamos a assumir que so pode ter uma vez cada fruta
@@ -754,8 +747,8 @@ LoopRemover:
 	ADD R5, 2;avanca
 	MOV [R5], R7;apaga a quinta casa do peso
 	MOV R6, [DISTANCIATOTAL]
-	MOV R5,R2
-	ADD R5,R6
+	MOV R5,R2; Coloca em R5 o o produto atual
+	ADD R5,R6; vai para o total
 	MOV [R5], R7; Apaga o total
 	ADD R5, 2;avanca
 	MOV [R5], R7; Apaga o total
@@ -765,22 +758,22 @@ LoopRemover:
 	MOV [R5], R7; Apaga o total
 	ADD R5, 2;avanca
 	MOV [R5], R7;
-	ADD R2,R0
-	JMP LoopRemover
+	ADD R2,R0; passa para o proximo produto
+	JMP LoopRemover; volta a fazer ate acababar os produtos
 BufferClear:
-	MOV R1,1
+	MOV R1,1; coloca a 1 para mostrar o menu inicial
 	RET
 
 ;------------------
 ;  	 Balanca
 ;------------------	
 BufferErro:
-	CALL RotinaERROBalanca
-	CALL Espera
-	MOV R2, MenuBalanca
-	CALL MostraDisplay
-	CALL LimpaPerifericos
-	JMP OBalanca
+	CALL RotinaERROBalanca; Para chamar a rotina de erro
+	CALL Espera; esperar paar o input de ok
+	MOV R2, MenuBalanca; coloca o endereco do menu da balanca em R2
+	CALL MostraDisplay; mostra o menu
+	CALL LimpaPerifericos; limpa os perifericos
+	JMP OBalanca; vai para a balanca
 OBalanca:
 	;carrega o valor dos perifericos
 	CALL MostraPeso; Mostra o peso no display
@@ -821,22 +814,22 @@ OBalanca:
 	MOV R6, [INCERMENTOPRODUTOS]	; o valor que vai incrementar nos menus
 
 CicloEncontraFruta:
-	CMP R2,0
-	JLE BufferDisplay
-	ADD R5,R6
-	SUB R2, 1
-	JMP CicloEncontraFruta
+	CMP R2,0; Verifica se ja encontrou a fruta
+	JLE BufferDisplay; se encontrar mostra 
+	ADD R5,R6; se nao entao passa para o proximo produto
+	SUB R2, 1; tira um para passar ao proximo produto
+	JMP CicloEncontraFruta; volta a fazer o ciclo
 BufferDisplay:
-	MOV R2, R5
-	CALL EditarPrint
-	CALL MostraDisplay
-	CALL LimpaPerifericos
-	CALL Espera
+	MOV R2, R5; Coloca o produto em R2
+	CALL EditarPrint; aqui faz as contas e escreve o resultado
+	CALL MostraDisplay; mostra o resultado
+	CALL LimpaPerifericos;limpa os perifericos
+	CALL Espera; espera o ok 
 
-	MOV R2, MenuBalanca
-	CALL MostraDisplay
-	CALL LimpaPerifericos
-	JMP OBalanca
+	MOV R2, MenuBalanca; coloca o endereco do menu em R2
+	CALL MostraDisplay; mostra o menu
+	CALL LimpaPerifericos;limpa os perifericos outravez para evitar erros
+	JMP OBalanca; volta a balanca
 
 ERROOVERFLOW:
 	POP TEMP
@@ -847,7 +840,7 @@ ERROOVERFLOW:
 	POP R7
 	POP R6
 	POP R2
-	MOV R2, MenuOverFlow
+	MOV R2, MenuOverFlow; acaba o editar print e mostra o menu de erro Overflow
 	RET
 EditarPrint:
 	PUSH R2
@@ -1111,7 +1104,9 @@ BufferAcabaMostraProdutos:
 	MOVB R1,[R0]; coloca o valor do botao ok no R1
 	CMP R1, 1;verifica se esta a pressionado
 	JLE BufferVoltaRegistos; se estiver a 0 volta atras
-	JMP BufferAcabaMostraProdutos
+	JMP BufferAcabaMostraProdutos; enquanto nao ha opcoes continua no loop
+BufferBuffferDesliga:
+	JMP BufferDesligaRegistos; para conseguir voltar atras
 MostraRegistos:
 	PUSH R0
 	PUSH R1
@@ -1136,7 +1131,6 @@ MostraRegistos:
 	MOV R11, [NUMERO0ASCII]; coloca 0 em R11
 	SUB R11, 1; para comparar com o 0 tambem
 	JMP loopMostraProdutos; vai para o loop
-
 BufferMostraProdutos:
 	MOV R2, 0; volta a colocar o R2 a 0
 	MOV TEMP, [DISTANCIATOTAL]; Coloca a distancia ao total em TEMP
@@ -1191,9 +1185,8 @@ EsperaOK:
 	MOV R8, ON_OFF;COlocao o botao em R8
 	MOVB R9, [R8];COloca o valor do R9
 	CMP R9,1; Verifica se esta ativo
-	JEQ BufferDesligaRegistos; Se estiver entao desliga
-	JMP EsperaOK
-
+	JEQ BufferBuffferDesliga; Se estiver entao desliga
+	JMP EsperaOK; enquanto nao ha input volta ao loop
 MostraPeso:
 	PUSH R0
 	PUSH R1
@@ -1316,4 +1309,3 @@ Acabaloop:
 	POP R0
 	RET
 	
-	;;falta Colocar a multiplicacao a funcionar( so falta colocar as unidades corretas)
